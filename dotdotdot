@@ -101,9 +101,8 @@ while read -r scname; do
     scdir="$(dirname $scpath)/"
     
     _info "With $scname"
-    _debug "    at $scpath"
-    _debug "  from $scdir"
-    _debug " under $CURR_USER"
+    _debug "      at $scpath"
+    _debug "    from $scdir"
 
     # Check if we have exec permissions on the file, and chmod
     # if AUTO_CHMOD is set.
