@@ -1,22 +1,39 @@
 #!/bin/bash
 
-_SCRIPT_DEBUG=true
+#
+# Configuration Options
+#
+AUTO_CHMOD=true
+DOTLOG="dot.log"
+_SCRIPT_DEBUG=false
+
+#
+# Dependencies
+#
+
+DOTLOG_ENABLED=false
 
 # Locking code modified from https://stackoverflow.com/a/1985512
 LOCKFD=99
-_prepare_locking() {
-    eval "exec $LOCKFD>\"$1\"";
-    trap flock -u $LOCKFD; "$1" EXIT;
-}
+exit_unlock() { flock -u $LOCKFD; exit $1; }
+_prepare_locking() { eval "exec $LOCKFD>\"$1\""; trap exit_unlock EXIT; }
 # Obtain an exclusive lock immediately or fail:
 exlock_now() { _prepare_locking $1; flock -xn $LOCKFD; }
-exit_unlock() { flock -u $LOCKFD; exit $1; }
 
 # Color Output
-_debug()  { if [[ _SCRIPT_DEBUG ]] ; then echo "$1"; fi; }
-_info()  { echo -e "\e[0;94m$1\e[0m"; }
-_warn()  { echo -e "\e[0;93m$1\e[0m"; }
-_error() { echo -e "\e[1;91m$1\e[0m"; }
+COLOR_INFO="\e[0;94m"
+COLOR_WARN="\e[0;93m"
+COLOR_ERROR="\e[1;91m"
+COLOR_NULL="\e[0m"
+_log() {
+    if [[ $DOTLOG != "" && $DOTLOG_ENABLED == true ]]; then
+        echo -e "$1\t$2" >> $DOTLOG
+    fi
+}
+_debug()  { if [[ "$_SCRIPT_DEBUG" == true ]] ; then echo "$1"; fi; _log "DEBUG" "$1"; }
+_info()  { echo -e "$COLOR_INFO$1$COLOR_NULL"; _log "INFO" "$1"; }
+_warn()  { echo -e "$COLOR_WARN$1$COLOR_NULL"; _log "WARN" "$1"; }
+_error() { echo -e "$COLOR_ERROR$1$COLOR_NULL";_log "ERROR" "$1"; }
 
 #
 # Start of Script
@@ -51,12 +68,68 @@ while getopts ":vd:" optname; do
     esac
 done
 
-exit 0
+LOCKFILE="$DOTROOT/.dotdotdot"
+
+# Check that the .dotdotdot lockfile exists.
+if [[ ! -f $LOCKFILE ]]; then
+    _error "Lock file at $LOCKFILE is missing. Quitting..."
+    exit 1
+fi
 
 if ! exlock_now $LOCKFILE ; then
     _error "Could not acquire lock for $LOCKFILE. Is another instance running?"
     _error "Quitting..."
-    exit_unlock 1    
+    exit_unlock 1
 fi
+
+# Enable logging
+if [[ $DOTLOG != "" ]]; then
+    DOTLOG="$DOTROOT/$DOTLOG"
+    truncate --size 0 "$DOTLOG"
+    DOTLOG_ENABLED=true
+    _debug "Logging for dotdotdot started"
+    _debug "    on $(date)"
+    _debug "    at $DOTROOT"
+fi
+
+
+# Loop over all .dotsh files
+while read -r scname; do
+    scname="${scname#./}"
+    scpath="$DOTROOT/$scname"
+    scdir="$(dirname $scpath)/"
+    
+    _info "Initializing $scname"
+    _debug "    at $scpath"
+    _debug "  from $scdir"
+
+    # Check if we have exec permissions on the file
+    if [[ "$AUTO_CHMOD" = true ]]; then
+        # $scdir
+        _info "Doot"
+    fi
+
+    time_start="$(date +%s.%N)"
+
+    ( cd $scdir; "./$(basename $scname)" )
+    scexit=$?
+
+    duration=$(echo "scale=2; ($(date +%s.%N) - $time_start)/1" | bc -l)
+
+    # Check success
+    if [[ 0 -eq $scexit ]]; then
+        completed="succeeded"
+    else
+        completed="failed with code $scexit"
+    fi
+
+    # Produce string output
+    if [[ $duration -eq 0 ]]; then
+        _info "\t...$completed quickly."
+    else
+        _info "\t...$completed in ${duration}s."
+    fi
+done <<< "$(cd $DOTROOT; find . -type f | grep .*\.dotsh$;)"
+
 
 exit_unlock 0
