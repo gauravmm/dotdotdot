@@ -12,6 +12,7 @@ _SCRIPT_DEBUG=false
 #
 
 DOTLOG_ENABLED=false
+CURR_USER=$(whoami)
 
 # Locking code modified from https://stackoverflow.com/a/1985512
 LOCKFD=99
@@ -99,14 +100,32 @@ while read -r scname; do
     scpath="$DOTROOT/$scname"
     scdir="$(dirname $scpath)/"
     
-    _info "Initializing $scname"
+    _info "With $scname"
     _debug "    at $scpath"
     _debug "  from $scdir"
+    _debug " under $CURR_USER"
 
-    # Check if we have exec permissions on the file
-    if [[ "$AUTO_CHMOD" = true ]]; then
-        # $scdir
-        _info "Doot"
+    # Check if we have exec permissions on the file, and chmod
+    # if AUTO_CHMOD is set.
+    if [[ ! -x "$scpath" ]]; then
+        _debug "  script is not executable."
+        if [[ "$AUTO_CHMOD" == true ]]; then
+            # Make sure you are the file owner:
+            scuser="$(stat -c %U $scpath)"
+            if [[ "$scuser" == "$CURR_USER" ]]; then
+                chmod u+x $scpath
+                if [[ 0 -eq $? ]]; then
+                    _debug "  changed permissions successfully."
+                else
+                    _debug "  failed to change permissions."
+                    _warn "Automatic CHMOD of '$scpath' failed. Skipping..."
+                    continue
+                fi
+            else
+                _error "Cannot auto-chmod '$scpath' because the file is owned by $scuser; you are $CURR_USER. Quitting..."
+                exit_unlock 1
+            fi
+        fi
     fi
 
     time_start="$(date +%s.%N)"
@@ -124,7 +143,7 @@ while read -r scname; do
     fi
 
     # Produce string output
-    if [[ $duration -eq 0 ]]; then
+    if [[ $duration == "0" ]]; then
         _info "\t...$completed quickly."
     else
         _info "\t...$completed in ${duration}s."
