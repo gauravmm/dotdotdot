@@ -1,1 +1,62 @@
 #!/bin/bash
+
+_SCRIPT_DEBUG=true
+
+# Locking code modified from https://stackoverflow.com/a/1985512
+LOCKFD=99
+_prepare_locking() {
+    eval "exec $LOCKFD>\"$1\"";
+    trap flock -u $LOCKFD; "$1" EXIT;
+}
+# Obtain an exclusive lock immediately or fail:
+exlock_now() { _prepare_locking $1; flock -xn $LOCKFD; }
+exit_unlock() { flock -u $LOCKFD; exit $1; }
+
+# Color Output
+_debug()  { if [[ _SCRIPT_DEBUG ]] ; then echo "$1"; fi; }
+_info()  { echo -e "\e[0;94m$1\e[0m"; }
+_warn()  { echo -e "\e[0;93m$1\e[0m"; }
+_error() { echo -e "\e[1;91m$1\e[0m"; }
+
+#
+# Start of Script
+#
+
+# Check if the directory has a .dotdotdot file:
+# From https://stackoverflow.com/a/246128
+DOTROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/dotfiles"
+
+while getopts ":vd:" optname; do
+    case "$optname" in
+        "v")
+            _SCRIPT_DEBUG=true
+            _debug "Verbose mode on."
+            ;;
+        "d")
+            DOTROOT="$OPTARG"
+            _debug "DOTROOT set to $DOTROOT."
+            ;;
+        "?")
+            echo "Unknown option $OPTARG. Quitting..."
+            exit 1
+            ;;
+        ":") 
+            _error "Value expected for option -$OPTARG. Quitting..."
+            exit 1
+            ;;
+        *)
+            _error "Unknown error while processing options. Quitting..."
+            exit 1
+            ;;
+    esac
+done
+
+exit 0
+
+if ! exlock_now $LOCKFILE ; then
+    _error "Could not acquire lock for $LOCKFILE. Is another instance running?"
+    _error "Quitting..."
+    exit_unlock 1    
+fi
+
+exit_unlock 0
