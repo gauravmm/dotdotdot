@@ -32,12 +32,17 @@ if which code; then
         # We remove all the removed extensions from the install list,
         # and remove all the added extensions from the removed list
         comm --output-delimiter "" -13 <(echo $ext_removed) <(cat install.extensions) > install.extensions
-        comm --output-delimiter "" -13 <(echo $ext_added)   <(cat removed.extensions)  > remove.extensions
+        comm --output-delimiter "" -13 <(echo $ext_added)   <(cat remove.extensions)  > remove.extensions
         # Finally, we add all the removed extensions to the removed list,
         # and add all the added extensions to the added list
-        comm --output-delimiter "" <(echo $ext_added) <(cat install.extensions)   > install.extensions
-        comm --output-delimiter "" <(echo $ext_removed) <(cat removed.extensions) > removed.extensions
+        comm --output-delimiter "" <(echo $ext_added) <(cat install.extensions) > install.extensions
+        comm --output-delimiter "" <(echo $ext_removed) <(cat remove.extensions) > remove.extensions
     fi
+
+    # Install all extensions in install.extensions
+    code --install-extension $( cat install.extensions )
+    # Remove all extensions in remove.extensions
+    code --uninstall-extension $( cat removes.extensions )
 
     # sort the installed extensions 
     code --list-extensions | sort > $INSTALLED_HIST
