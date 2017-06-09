@@ -1,0 +1,10 @@
+{
+    "window.zoomLevel": 2,
+    "editor.fontFamily": "'Fira Code', 'Droid Sans Mono', 'Courier New', monospace, 'Droid Sans Fallback'",
+    "editor.fontLigatures": true,
+    "terminal.integrated.fontLigatures": true,
+    "editor.disableMonospaceOptimizations": true,
+    "files.associations": {
+        "*.dotsh": "shellscript"
+    }
+}

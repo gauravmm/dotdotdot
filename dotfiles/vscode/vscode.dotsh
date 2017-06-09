@@ -1,0 +1,44 @@
+#!/bin/bash
+set -e
+
+CONFDIR=~/.config/Code/User
+
+if [[ ! -d $CONFDIR ]]; then
+    echo "Visual Studio Code is not installed, or not yet configured!"
+    mkdir --parents $CONFDIR
+fi
+
+# Settings
+rsync -rtuv settings.json $CONFDIR/settings.json
+rsync -rtuv $CONFDIR/settings.json settings.json
+
+# Keybindings
+rsync -rtuv keybindings.json $CONFDIR/keybindings.json
+rsync -rtuv $CONFDIR/keybindings.json keybindings.json
+
+INSTALLED_HIST=$CONFDIR/installed.extensions
+
+# If vscode is installed
+if which code; then
+    tmpfn=$(mktemp)
+    code --list-extensions | sort > $tmpfn
+
+    # If the old list is available, then we see if we can update it
+    if [[ -f $INSTALLED_HIST ]]; then
+        # We now find all extensions that are present in the new list, but not the old. Assume those are added
+        # The corresponding case for removed extensions
+        ext_added=$(   comm --output-delimiter "" -13 <(cat $INSTALLED_HIST) <(cat $tmpfn) )
+        ext_removed=$( comm --output-delimiter "" -23 <(cat $INSTALLED_HIST) <(cat $tmpfn) )
+        # We remove all the removed extensions from the install list,
+        # and remove all the added extensions from the removed list
+        comm --output-delimiter "" -13 <(echo $ext_removed) <(cat install.extensions) > install.extensions
+        comm --output-delimiter "" -13 <(echo $ext_added)   <(cat removed.extensions)  > remove.extensions
+        # Finally, we add all the removed extensions to the removed list,
+        # and add all the added extensions to the added list
+        comm --output-delimiter "" <(echo $ext_added) <(cat install.extensions)   > install.extensions
+        comm --output-delimiter "" <(echo $ext_removed) <(cat removed.extensions) > removed.extensions
+    fi
+
+    # sort the installed extensions 
+    code --list-extensions | sort > $INSTALLED_HIST
+fi
