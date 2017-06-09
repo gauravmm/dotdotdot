@@ -22,28 +22,50 @@ INSTALLED_HIST=$CONFDIR/installed.extensions
 if which code; then
     tmpfn=$(mktemp)
     code --list-extensions | sort > $tmpfn
-
+    
     # If the old list is available, then we see if we can update it
     if [[ -f $INSTALLED_HIST ]]; then
         # We now find all extensions that are present in the new list, but not the old. Assume those are added
         # The corresponding case for removed extensions
-        ext_added=$(   comm --output-delimiter "" -13 <(cat $INSTALLED_HIST) <(cat $tmpfn) )
-        ext_removed=$( comm --output-delimiter "" -23 <(cat $INSTALLED_HIST) <(cat $tmpfn) )
+        ext_added=$(mktemp)
+        ext_removed=$(mktemp)
+        comm --output-delimiter "" -13 <(cat $INSTALLED_HIST) <(cat $tmpfn) | tr -d '\0' > $ext_added
+        comm --output-delimiter "" -23 <(cat $INSTALLED_HIST) <(cat $tmpfn) | tr -d '\0' > $ext_removed
+        echo "ADDED:" $( cat $ext_added )
+        echo "REMOVED:" $( cat $ext_removed )
+        # Before we change anything
+        tmp_inst=$(mktemp)
+        tmp_remo=$(mktemp)
+        cat install.extensions | sort > $tmp_inst
+        cat remove.extensions | sort > $tmp_remo
+        echo "INSTALL_0" $( cat $tmp_inst )
+        echo "REMOVE_0" $( cat $tmp_remo )
         # We remove all the removed extensions from the install list,
         # and remove all the added extensions from the removed list
-        comm --output-delimiter "" -13 <(echo $ext_removed) <(cat install.extensions) > install.extensions
-        comm --output-delimiter "" -13 <(echo $ext_added)   <(cat remove.extensions)  > remove.extensions
+        comm --output-delimiter "" -13 <(cat $ext_removed) <(cat $tmp_inst) | tr -d '\0' > install.extensions
+        comm --output-delimiter "" -13 <(cat $ext_added)   <(cat $tmp_remo) | tr -d '\0' > remove.extensions
+
+        echo "INSTALL_1" $( cat install.extensions )
+        echo "REMOVE_1" $( cat remove.extensions )
         # Finally, we add all the removed extensions to the removed list,
         # and add all the added extensions to the added list
-        comm --output-delimiter "" <(echo $ext_added) <(cat install.extensions) > install.extensions
-        comm --output-delimiter "" <(echo $ext_removed) <(cat remove.extensions) > remove.extensions
+        comm --output-delimiter "" <(cat $ext_added)  <(cat install.extensions) | tr -d '\0' > $tmp_inst
+        comm --output-delimiter "" <(cat $ext_removed) <(cat remove.extensions) | tr -d '\0' > $tmp_remo
+        cat $tmp_inst > install.extensions
+        cat $tmp_remo > remove.extensions
+        echo "INSTALL_2" $( cat install.extensions )
+        echo "REMOVE_2" $( cat remove.extensions )
+
+        rm $tmp_inst $tmp_remo $tmpfn $ext_added $ext_removed
     fi
 
     # Install all extensions in install.extensions
-    code --install-extension $( cat install.extensions )
+    # code --install-extension $( cat install.extensions )
     # Remove all extensions in remove.extensions
-    code --uninstall-extension $( cat removes.extensions )
+    # code --uninstall-extension $( cat remove.extensions )
 
     # sort the installed extensions 
     code --list-extensions | sort > $INSTALLED_HIST
+
+    exit 1
 fi
