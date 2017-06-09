@@ -51,21 +51,28 @@ if which code; then
         # and add all the added extensions to the added list
         comm --output-delimiter "" <(cat $ext_added)  <(cat install.extensions) | tr -d '\0' > $tmp_inst
         comm --output-delimiter "" <(cat $ext_removed) <(cat remove.extensions) | tr -d '\0' > $tmp_remo
-        cat $tmp_inst > install.extensions
-        cat $tmp_remo > remove.extensions
+        cat $tmp_inst | sed "/^$/d" > install.extensions
+        cat $tmp_remo | sed "/^$/d" > remove.extensions
         echo "INSTALL_2" $( cat install.extensions )
         echo "REMOVE_2" $( cat remove.extensions )
 
-        rm $tmp_inst $tmp_remo $tmpfn $ext_added $ext_removed
+        rm $tmp_inst $tmp_remo $ext_added $ext_removed
     fi
 
-    # Install all extensions in install.extensions
-    # code --install-extension $( cat install.extensions )
-    # Remove all extensions in remove.extensions
-    # code --uninstall-extension $( cat remove.extensions )
+    tmp_cmd=$(mktemp)
+    # Get all extensions that appear in the to-install list, but not in the already installed list.
+    comm --output-delimiter "" -13 <(cat $tmpfn)  <(cat install.extensions) | tr -d '\0' | sed 's/^/--install-extension /' > $tmp_cmd
+    # Remove all extensions in remove.extensions that appear in the already installed list
+    comm --output-delimiter "" -12 <(cat $tmpfn)  <(cat remove.extensions) | tr -d '\0' | sed 's/^/--uninstall-extension /' >> $tmp_cmd
+    # Command
+    echo "COMMAND: code $( cat $tmp_cmd )"
+    
+    if [[ -s $tmp_cmd ]]; then
+        echo "Running command..."
+        code $(cat $tmp_cmd)
+    fi
 
-    # sort the installed extensions 
     code --list-extensions | sort > $INSTALLED_HIST
 
-    exit 1
+    rm $tmpfn $tmp_cmd
 fi
