@@ -22,20 +22,30 @@ _prepare_locking() { eval "exec $LOCKFD>\"$1\""; trap exit_unlock EXIT; }
 exlock_now() { _prepare_locking $1; flock -xn $LOCKFD; }
 
 # Color Output
-COLOR_INFO="\e[0;94m"
-COLOR_WARN="\e[0;93m"
-COLOR_ERROR="\e[1;91m"
-COLOR_NULL="\e[0m"
+COLOR_INFO=$(printf "\e[0;94m")
+COLOR_WARN=$(printf "\e[0;93m")
+COLOR_ERROR=$(printf "\e[0;91m")
+COLOR_NULL=$(printf "\e[0m")
 _log() {
     if [[ $DOTLOG != "" && $DOTLOG_ENABLED == true ]]; then
-        echo -e "$1\t$2" >> $DOTLOG
+        if [[ $1 != "" ]]; then
+            echo -e "[$1]\t$2" >> $DOTLOG
+        else
+            echo >> $DOTLOG
+        fi
     fi
 }
-# _debug()  { if [[ "$_SCRIPT_DEBUG" == true ]] ; then echo "$1"; fi; _log "DEBUG" "$1"; }
+_log_copy() {
+    if [[ $DOTLOG != "" && $DOTLOG_ENABLED == true ]]; then
+        cat $1 >> $DOTLOG
+        echo "--------------------" >> $DOTLOG
+    fi
+}
+
 _debug()  { _log "DEBUG" "$1"; }
 _info()  { echo -e "$COLOR_INFO$1$COLOR_NULL"; _log "INFO" "$1"; }
 _warn()  { echo -e "$COLOR_WARN$1$COLOR_NULL"; _log "WARN" "$1"; }
-_error() { echo -e "$COLOR_ERROR$1$COLOR_NULL";_log "ERROR" "$1"; }
+_error() { echo -e "$COLOR_ERROR$2$1$COLOR_NULL";_log "ERROR" "$1"; }
 
 STATUS_COLOR=("\e[1;91m" "\e[1;93m" "\e[1;92m")
 STATUS_TEXT=(" ERROR " "RUNNING" "SUCCESS")
@@ -45,6 +55,12 @@ STATUS_SUCCESS=2
 
 DURATION_IMMEDIATE=" --.-s"
 COLOR_TIME="\e[0;94m"
+
+ INDENT_START="   ╓╥────────────┈"
+INDENT_PREFIX="   ║║ "
+   INDENT_END="   ╙╨────────────┈"
+
+STD_PREFIX="$COLOR_ERROR$INDENT_PREFIX$COLOR_NULL"
 
 SCREEN_WIDTH=$(tput cols)
 _print_status_row_overwrite() {
@@ -174,10 +190,11 @@ while read -r scname; do
 
     time_start="$(date +%s.%N)"
 
-    _print_status_row $scname $STATUS_WAITING 
-    
+    _print_status_row $scname $STATUS_WAITING
+    scoutf=$(mktemp)
+    scerrf=$(mktemp)
     _debug "Running $scname"
-    ( cd $scdir; "./$(basename $scname)" >> "$DOTLOG" ) & 
+    ( cd $scdir; "./$(basename $scname)" >"$scoutf" 2>$scerrf ) & 
     wait $!
     scexit=$?
 
@@ -191,7 +208,15 @@ while read -r scname; do
     else
         _print_status_row $scname $STATUS_ERROR $duration
         _print_status_row_next
-        _error "failed with code $scexit"
+        echo "$COLOR_ERROR$INDENT_START$COLOR_NULL"
+        _error "failed with code $scexit" "$INDENT_PREFIX" 
+        _error "output:" "$INDENT_PREFIX"
+        cat "$scoutf" | sed -e "s/^/$STD_PREFIX/"
+        _log_copy "$scoutf"
+        _error "error:" "$INDENT_PREFIX"
+        cat "$scerrf" | sed -e "s/^/$STD_PREFIX/"
+        _log_copy "$scerrf"
+        echo "$COLOR_ERROR$INDENT_END$COLOR_NULL"
     fi
 
 done <<< "$(cd $DOTROOT; find . -type f | grep .*\.dotsh$;)"
