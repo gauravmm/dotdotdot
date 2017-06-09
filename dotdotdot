@@ -219,7 +219,9 @@ while read -r scname; do
         echo "$COLOR_ERROR$INDENT_END$COLOR_NULL"
     fi
 
-done <<< "$(cd $DOTROOT; find . -type f | grep .*\.dotsh$;)"
+    rm "$scoutf"
+    rm "$scerrf"
 
+done <<< "$(cd $DOTROOT; find . -type f | grep .*\.dotsh$;)"
 
 exit_unlock 0
