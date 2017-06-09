@@ -31,10 +31,30 @@ _log() {
         echo -e "$1\t$2" >> $DOTLOG
     fi
 }
-_debug()  { if [[ "$_SCRIPT_DEBUG" == true ]] ; then echo "$1"; fi; _log "DEBUG" "$1"; }
+# _debug()  { if [[ "$_SCRIPT_DEBUG" == true ]] ; then echo "$1"; fi; _log "DEBUG" "$1"; }
+_debug()  { _log "DEBUG" "$1"; }
 _info()  { echo -e "$COLOR_INFO$1$COLOR_NULL"; _log "INFO" "$1"; }
 _warn()  { echo -e "$COLOR_WARN$1$COLOR_NULL"; _log "WARN" "$1"; }
 _error() { echo -e "$COLOR_ERROR$1$COLOR_NULL";_log "ERROR" "$1"; }
+
+STATUS_COLOR=("\e[1;91m" "\e[1;93m" "\e[1;92m")
+STATUS_TEXT=(" ERROR " "RUNNING" "SUCCESS")
+STATUS_ERROR=0
+STATUS_WAITING=1
+STATUS_SUCCESS=2
+
+SCREEN_WIDTH=$(tput cols)
+_print_status_row_overwrite() {
+    echo -ne "\r"
+}
+_print_status_row() {
+    cols_rem=$(( $SCREEN_WIDTH - ${#1} - 10 ))
+    echo -ne "${STATUS_COLOR[$2]}[${STATUS_TEXT[$2]}]$COLOR_NULL $1"
+    head -c $cols_rem < /dev/zero | tr '\0' ' '
+}
+_print_status_row_next() {
+    echo
+}
 
 #
 # Start of Script
@@ -55,15 +75,15 @@ while getopts ":vd:" optname; do
             _debug "DOTROOT set to $DOTROOT."
             ;;
         "?")
-            echo "Unknown option $OPTARG. Quitting..."
+            echo "Unknown option $OPTARG. Halting..."
             exit 1
             ;;
         ":") 
-            _error "Value expected for option -$OPTARG. Quitting..."
+            _error "Value expected for option -$OPTARG. Halting..."
             exit 1
             ;;
         *)
-            _error "Unknown error while processing options. Quitting..."
+            _error "Unknown error while processing options. Halting..."
             exit 1
             ;;
     esac
@@ -73,13 +93,13 @@ LOCKFILE="$DOTROOT/.dotdotdot"
 
 # Check that the .dotdotdot lockfile exists.
 if [[ ! -f $LOCKFILE ]]; then
-    _error "Lock file at $LOCKFILE is missing. Quitting..."
+    _error "Lock file at $LOCKFILE is missing. Halting..."
     exit 1
 fi
 
 if ! exlock_now $LOCKFILE ; then
     _error "Could not acquire lock for $LOCKFILE. Is another instance running?"
-    _error "Quitting..."
+    _error "Halting..."
     exit_unlock 1
 fi
 
@@ -100,7 +120,7 @@ while read -r scname; do
     scpath="$DOTROOT/$scname"
     scdir="$(dirname $scpath)/"
     
-    _info "With $scname"
+    _debug "With $scname"
     _debug "      at $scpath"
     _debug "    from $scdir"
 
@@ -117,11 +137,15 @@ while read -r scname; do
                     _debug "  changed permissions successfully."
                 else
                     _debug "  failed to change permissions."
-                    _warn "Automatic CHMOD of '$scpath' failed. Skipping..."
+                    _print_status_row $scname $STATUS_ERROR
+                    _print_status_row_next
+                    _warn "    Automatic CHMOD of '$scpath' failed."                    
                     continue
                 fi
             else
-                _error "Cannot auto-chmod '$scpath' because the file is owned by $scuser; you are $CURR_USER. Quitting..."
+                _print_status_row $scname $STATUS_ERROR
+                _print_status_row_next
+                _error "Cannot automatically chmod '$scpath' because the file is owned by $scuser; you are $CURR_USER. Halting..."
                 exit_unlock 1
             fi
         fi
@@ -129,23 +153,29 @@ while read -r scname; do
 
     time_start="$(date +%s.%N)"
 
+    _print_status_row $scname $STATUS_WAITING
+    
     ( cd $scdir; "./$(basename $scname)" )
     scexit=$?
 
     duration=$(echo "scale=2; ($(date +%s.%N) - $time_start)/1" | bc -l)
 
+    _print_status_row_overwrite
     # Check success
     if [[ 0 -eq $scexit ]]; then
-        completed="succeeded"
+        _print_status_row $scname $STATUS_SUCCESS
+        _print_status_row_next
     else
-        completed="failed with code $scexit"
+        _print_status_row $scname $STATUS_ERROR
+        _print_status_row_next
+        _error "failed with code $scexit"
     fi
 
     # Produce string output
     if [[ $duration == "0" ]]; then
-        _info "\t...$completed quickly."
+        _info "    quickly."
     else
-        _info "\t...$completed in ${duration}s."
+        _info "    in ${duration}s."
     fi
 done <<< "$(cd $DOTROOT; find . -type f | grep .*\.dotsh$;)"
 
