@@ -43,13 +43,33 @@ STATUS_ERROR=0
 STATUS_WAITING=1
 STATUS_SUCCESS=2
 
+DURATION_IMMEDIATE=" --.-s"
+COLOR_TIME="\e[0;94m"
+
 SCREEN_WIDTH=$(tput cols)
 _print_status_row_overwrite() {
     echo -ne "\r"
 }
 _print_status_row() {
-    cols_rem=$(( $SCREEN_WIDTH - ${#1} - 10 ))
-    echo -ne "${STATUS_COLOR[$2]}[${STATUS_TEXT[$2]}]$COLOR_NULL $1"
+    # 10 columns for the "[STATUS] "
+    # 7 columns for the duration
+    cols_rem=$(( $SCREEN_WIDTH - ${#1} - 10 - 7 ))
+    echo -ne "${STATUS_COLOR[$2]}[${STATUS_TEXT[$2]}]$COLOR_NULL $COLOR_TIME"
+    
+    # Produce string output
+    case "$3" in
+        "")
+            echo -ne $DURATION_IMMEDIATE
+            ;;
+        "0")
+            echo -ne " 0.0s"
+            ;;
+        *)
+            printf "%4ss" "$3"
+            ;;
+    esac
+
+    echo -ne "$COLOR_NULL $1"
     head -c $cols_rem < /dev/zero | tr '\0' ' '
 }
 _print_status_row_next() {
@@ -120,6 +140,7 @@ while read -r scname; do
     scpath="$DOTROOT/$scname"
     scdir="$(dirname $scpath)/"
     
+    _log
     _debug "With $scname"
     _debug "      at $scpath"
     _debug "    from $scdir"
@@ -143,7 +164,7 @@ while read -r scname; do
                     continue
                 fi
             else
-                _print_status_row $scname $STATUS_ERROR
+                _print_status_row $scname $STATUS_ERROR 
                 _print_status_row_next
                 _error "Cannot automatically chmod '$scpath' because the file is owned by $scuser; you are $CURR_USER. Halting..."
                 exit_unlock 1
@@ -153,30 +174,26 @@ while read -r scname; do
 
     time_start="$(date +%s.%N)"
 
-    _print_status_row $scname $STATUS_WAITING
+    _print_status_row $scname $STATUS_WAITING 
     
-    ( cd $scdir; "./$(basename $scname)" )
+    _debug "Running $scname"
+    ( cd $scdir; "./$(basename $scname)" >> "$DOTLOG" ) & 
+    wait $!
     scexit=$?
 
-    duration=$(echo "scale=2; ($(date +%s.%N) - $time_start)/1" | bc -l)
+    duration=$(echo "scale=1; ($(date +%s.%N) - $time_start)/1" | bc -l)
 
     _print_status_row_overwrite
     # Check success
     if [[ 0 -eq $scexit ]]; then
-        _print_status_row $scname $STATUS_SUCCESS
+        _print_status_row $scname $STATUS_SUCCESS $duration
         _print_status_row_next
     else
-        _print_status_row $scname $STATUS_ERROR
+        _print_status_row $scname $STATUS_ERROR $duration
         _print_status_row_next
         _error "failed with code $scexit"
     fi
 
-    # Produce string output
-    if [[ $duration == "0" ]]; then
-        _info "    quickly."
-    else
-        _info "    in ${duration}s."
-    fi
 done <<< "$(cd $DOTROOT; find . -type f | grep .*\.dotsh$;)"
 
 
