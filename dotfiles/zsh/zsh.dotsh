@@ -1,0 +1,20 @@
+#!/bin/bash
+set -e
+
+# History file
+HISTFILE=~/.histfile
+
+touch $HISTFILE
+chmod u+rw $HISTFILE
+
+# ZGEN
+ZGENDIR=~/.zgen
+ZGENREPO="https://github.com/tarjoilija/zgen.git"
+
+if [ ! -d $ZGENDIR ]; then
+	git clone "$ZGENREPO" "$ZGENDIR"
+fi
+
+# .zshrc
+rsync -rtuv .zshrc ~/.zshrc
+rsync -rtuv ~/.zshrc .zshrc
