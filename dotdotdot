@@ -95,11 +95,12 @@ _print_status_row() {
 }
 _print_status_row_next() { echo; }
 
+COMMAND_VAL=""
 _command() {
-    local scname=$1
+    local scname="$1"
 
     local time_start="$(date +%s.%N)"
-    _print_status_row $scname $STATUS_WAITING
+    _print_status_row "$scname" $STATUS_WAITING
     local scoutf=$(mktemp)
     local scerrf=$(mktemp)
     _debug "Running $scname"
@@ -115,14 +116,14 @@ _command() {
     _print_status_row_overwrite
     # Check success
     if [[ 0 -eq $scexit ]]; then
-        _print_status_row $scname $STATUS_SUCCESS $duration
+        _print_status_row "$scname" $STATUS_SUCCESS $duration
         _print_status_row_next
         _log "DEBUG" "output:" "$INDENT_PREFIX"
         _log_copy "$scoutf"
         _log "DEBUG" "error:" "$INDENT_PREFIX"
         _log_copy "$scerrf"
     else
-        _print_status_row $scname $STATUS_ERROR $duration
+        _print_status_row "$scname" $STATUS_ERROR $duration
         _print_status_row_next
         echo "$COLOR_ERROR$INDENT_START$COLOR_NULL"
         _error "failed with code $scexit" "$INDENT_PREFIX" 
@@ -135,8 +136,12 @@ _command() {
         echo "$COLOR_ERROR$INDENT_END$COLOR_NULL"
     fi
 
+    COMMAND_VAL=$(cat $scoutf)
+
     rm "$scoutf"
     rm "$scerrf"
+
+    return $scexit
 }
 
 # MAIN SYNC FUNCTION
@@ -178,7 +183,7 @@ _dotdotdot_sync() {
                 fi
             fi
         fi
-
+        
         _command $scname "./$(basename $scname)" $scdir
 
     done <<< "$(cd $DOTROOT; find . -type f | grep .*\.dotsh$;)"
@@ -186,6 +191,7 @@ _dotdotdot_sync() {
 
 STATUS_GIT_FETCH="Checking upstream repository for updates."
 STATUS_GIT_PULL="Pulling updates from upstream repository."
+STATUS_GIT_PUSH="Pushing updates to upstream repository."
 
 _dotdotdot_check_git() {
     # Check if we are in a git repository.
@@ -201,51 +207,39 @@ _dotdotdot_check_git() {
     fi
     git_upstream=$(echo $git_upstream | sed 's/\// /g')
 
-    _print_status_row "$STATUS_GIT_FETCH" $STATUS_WAITING
 
-    local time_start="$(date +%s.%N)"
-    local git_remote=$(git ls-remote $git_upstream)
-    local tmp_rv=$?
-    local duration=$(echo "scale=1; ($(date +%s.%N) - $time_start)/1" | bc -l)
-
-    if [[ ! $tmp_rv ]]; then
-        _print_status_row_overwrite
-        _print_status_row "$STATUS_GIT_FETCH" $STATUS_ERROR $duration
-        _print_status_row_next
+    _command "$STATUS_GIT_FETCH" "git ls-remote $git_upstream" 
+    if [[ ! $? ]]; then
         _warn "Upstream unreachable; updates are not available."
         return 0
     fi
+    local git_remote="$COMMAND_VAL"
+    local git_remote_branch=$(echo $git_remote | cut -d " " -f 2 | cut -d "/" -f 3)
+    git_remote=$(echo $git_remote | cut -d " " -f 1)
 
-    _print_status_row_overwrite
-    _print_status_row "$STATUS_GIT_FETCH" $STATUS_SUCCESS $duration
-    _print_status_row_next
-    local git_remote_branch=$(echo $git_remote | cut -f 2)
-    git_remote=$(echo $git_remote | cut -f 1)
-
-    local git_local=$(git rev-parse HEAD)
-    if [[ $git_local == $git_remote ]]; then
+    _log "DEBUG" "Remote: $git_remote"
+    _log "DEBUG" " Local: $(git rev-parse HEAD)"
+    
+    if [[ $(git rev-parse HEAD) == $git_remote ]]; then
         _info "No updates necessary. You have the latest from $git_remote_branch."
         return 0
     else
-        _print_status_row "$STATUS_GIT_PULL" $STATUS_WAITING
-
-        time_start="$(date +%s.%N)"
-        local git_pull=$(git pull $git_upstream >/dev/null 2>&1)
-        tmp_rv=$?
-        duration=$(echo "scale=1; ($(date +%s.%N) - $time_start)/1" | bc -l)
-
-        if [[ ! $tmp_rv ]]; then
-            _print_status_row_overwrite
-            _print_status_row "$STATUS_GIT_PULL" $STATUS_ERROR $duration
-            _print_status_row_next
+        _command "$STATUS_GIT_PULL" "git pull $git_upstream"
+        if [[ ! $? ]]; then
             _error "Please pull and merge before running dotdotdot again."
             return 1
         fi
-        _print_status_row_overwrite
-        _print_status_row "$STATUS_GIT_PULL" $STATUS_SUCCESS $duration
-        _print_status_row_next
+
+        if [[ $(git rev-parse HEAD) != $git_remote ]]; then
+            _command "$STATUS_GIT_PUSH" "git push $git_upstream"
+            if [[ ! $? ]]; then
+                _error "Please merge before running dotdotdot again."
+                return 1
+            fi
+        fi
     fi
 
+    return 0
 }
 
 #
@@ -318,13 +312,13 @@ _info
 
 
 # Pull updates from the remote repository if necessary
-_info "Checking remote repository for updates." $COLOR_TITLE
+_info "Updating:" $COLOR_TITLE
 _dotdotdot_check_git
 _git_run=$?
 _info
 
 # Run the scripts
-_info "Running scripts." $COLOR_TITLE
+_info "Running:" $COLOR_TITLE
 _dotdotdot_sync
 
 # Great, now we 
