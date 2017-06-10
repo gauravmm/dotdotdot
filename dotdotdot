@@ -26,6 +26,7 @@ exlock_now() { _prepare_locking $1; flock -xn $LOCKFD; }
 
 
 # Output and Logging:
+COLOR_TITLE=$(printf "\e[1;94m")
 COLOR_INFO=$(printf "\e[0;94m")
 COLOR_WARN=$(printf "\e[0;93m")
 COLOR_ERROR=$(printf "\e[0;91m")
@@ -129,13 +130,13 @@ _dotdotdot_sync() {
                 else
                     _print_status_row $scname $STATUS_ERROR 
                     _print_status_row_next
-                    _error "Cannot automatically chmod '$scpath' because the file is owned by $scuser; you are $CURR_USER. Halting..."
-                    exit_unlock 1
+                    _warn "Cannot automatically chmod '$scpath' because the file is owned by $scuser; you are $CURR_USER. Skipping..."
+                    continue
                 fi
             fi
         fi
 
-        time_start="$(date +%s.%N)"
+        local time_start="$(date +%s.%N)"
 
         _print_status_row $scname $STATUS_WAITING
         scoutf=$(mktemp)
@@ -145,7 +146,7 @@ _dotdotdot_sync() {
         wait $!
         scexit=$?
 
-        duration=$(echo "scale=1; ($(date +%s.%N) - $time_start)/1" | bc -l)
+        local duration=$(echo "scale=1; ($(date +%s.%N) - $time_start)/1" | bc -l)
 
         _print_status_row_overwrite
         # Check success
@@ -174,6 +175,70 @@ _dotdotdot_sync() {
         rm "$scerrf"
 
     done <<< "$(cd $DOTROOT; find . -type f | grep .*\.dotsh$;)"
+}
+
+STATUS_GIT_FETCH="Checking upstream repository for updates."
+STATUS_GIT_PULL="Pulling updates from upstream repository."
+
+_dotdotdot_check_git() {
+    # Check if we are in a git repository.
+    if [[ ! "$(git rev-parse --is-inside-work-tree 2>/dev/null)" ]]; then
+        _warn "Not inside a git repository; updates are not available."
+        return 0
+    fi
+
+    local git_upstream=$( git rev-parse --abbrev-ref @{u} )
+    if [[ ! $? ]]; then
+        _warn "No upstream configured; updates are not available."
+        return 0
+    fi
+    git_upstream=$(echo $git_upstream | sed 's/\// /g')
+
+    _print_status_row "$STATUS_GIT_FETCH" $STATUS_WAITING
+
+    local time_start="$(date +%s.%N)"
+    local git_remote=$(git ls-remote $git_upstream)
+    local tmp_rv=$?
+    local duration=$(echo "scale=1; ($(date +%s.%N) - $time_start)/1" | bc -l)
+
+    if [[ ! $tmp_rv ]]; then
+        _print_status_row_overwrite
+        _print_status_row "$STATUS_GIT_FETCH" $STATUS_ERROR $duration
+        _print_status_row_next
+        _warn "Upstream unreachable; updates are not available."
+        return 0
+    fi
+
+    _print_status_row_overwrite
+    _print_status_row "$STATUS_GIT_FETCH" $STATUS_SUCCESS $duration
+    _print_status_row_next
+    local git_remote_branch=$(echo $git_remote | cut -f 2)
+    git_remote=$(echo $git_remote | cut -f 1)
+
+    local git_local=$(git rev-parse HEAD)
+    if [[ $git_local == $git_remote ]]; then
+        _info "No updates necessary. You have the latest from $git_remote_branch."
+        return 0
+    else
+        _print_status_row "$STATUS_GIT_PULL" $STATUS_WAITING
+
+        time_start="$(date +%s.%N)"
+        local git_pull=$(git pull $git_upstream >/dev/null 2>&1)
+        tmp_rv=$?
+        duration=$(echo "scale=1; ($(date +%s.%N) - $time_start)/1" | bc -l)
+
+        if [[ ! $tmp_rv ]]; then
+            _print_status_row_overwrite
+            _print_status_row "$STATUS_GIT_PULL" $STATUS_ERROR $duration
+            _print_status_row_next
+            _error "Please pull and merge before running dotdotdot again."
+            return 1
+        fi
+        _print_status_row_overwrite
+        _print_status_row "$STATUS_GIT_PULL" $STATUS_SUCCESS $duration
+        _print_status_row_next
+    fi
+
 }
 
 #
@@ -232,7 +297,31 @@ if [[ $DOTLOG != "" ]]; then
     _debug "    at $DOTROOT"
 fi
 
+_info
+_info "    | |       _     | |       _     | |       _   "
+_info "  __| | ___ _| |_ __| | ___ _| |_ __| | ___ _| |_ "
+_info " / _  |/ _ (_   _) _  |/ _ (_   _) _  |/ _ (_   _)"
+_info "( (_| | |_| || |( (_| | |_| || |( (_| | |_| || |_ "
+_info " \____|\___/ \__)\____|\___/ \__)\____|\___/ \__) "
+_info
+_info
 
+# Make sure the git repo is clean first.
+# If the repo is not clean, ask the user if they want to clean it.
+
+
+# Pull updates from the remote repository if necessary
+_info "Checking remote repository for updates." $COLOR_TITLE
+_dotdotdot_check_git
+_git_run=$?
+_info
+
+# Run the scripts
+_info "Running scripts." $COLOR_TITLE
 _dotdotdot_sync
+
+# Great, now we 
+
+
 
 exit_unlock 0
