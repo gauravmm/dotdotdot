@@ -195,6 +195,12 @@ STATUS_GIT_PULL="Pulling updates from upstream repository."
 STATUS_GIT_PUSH="Pushing updates to upstream repository."
 
 _git_check_local() {
+    # Check if we are in a git repository.
+    if [[ ! "$(git rev-parse --is-inside-work-tree 2>/dev/null)" ]]; then
+        _warn "Not inside a git repository; updates are not available." "$INDENT"
+        return 1
+    fi
+
     if ! git diff-index --quiet HEAD --; then
         _error "Local repository has uncommitted changes."
         
@@ -206,7 +212,7 @@ _git_check_local() {
             _debug "Stashing..."
             ( git stash save -u "Stashed by dotdotdot on $(date)." >/dev/null 2>&1 )
         else
-            return 1
+            return 2
         fi
     fi
 
@@ -214,12 +220,6 @@ _git_check_local() {
 }
 
 _git_check_remote() {
-    # Check if we are in a git repository.
-    if [[ ! "$(git rev-parse --is-inside-work-tree 2>/dev/null)" ]]; then
-        _warn "Not inside a git repository; updates are not available." "$INDENT"
-        return 0
-    fi
-
     local git_upstream=$( git rev-parse --abbrev-ref @{u} )
     if [[ ! $? ]]; then
         _warn "No upstream configured; updates are not available." "$INDENT"
@@ -332,28 +332,29 @@ _info
 _git_check_local
 _git_run=$?
 
-if [[ $_git_run ]]; then
+if [[ $_git_run == 2 ]]; then
     _error "Halting."
     exit_unlock 0
 fi
 
+if [[ $_git_run == 0 ]]; then
+    # Pull updates from the remote repository if necessary
+    _info "Updating:" $COLOR_TITLE
+    _git_check_remote
+    _git_run=$?
+    _info
 
-# Pull updates from the remote repository if necessary
-_info "Updating:" $COLOR_TITLE
-_git_check_remote
-_git_run=$?
-_info
-
-if [[ ! $_git_run ]]; then
-    _error "Halting."
-    exit_unlock 0
+    if [[ ! $_git_run ]]; then
+        _error "Halting."
+        exit_unlock 0
+    fi
 fi
+
 # Run the scripts
 _info "Running:" $COLOR_TITLE
 _dotdotdot_sync
 
-# Great, now we 
-
-
+_info
+_info "Done!"
 
 exit_unlock 0
