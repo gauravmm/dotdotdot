@@ -195,8 +195,8 @@ STATUS_GIT_FETCH="Checking upstream repository for updates."
 STATUS_GIT_PULL="Pulling updates from upstream repository."
 STATUS_GIT_PUSH="Pushing updates to upstream repository."
 
-_git_check_clean() {
-    ( cd $DOTROOT; git diff-index --quiet HEAD --)
+_git_check_dirty() {
+    ( cd $DOTROOT; ! git diff-index --quiet HEAD --)
 }
 
 _git_check_local() {
@@ -206,7 +206,7 @@ _git_check_local() {
         return 1
     fi
 
-    _git_check_clean
+    _git_check_dirty
     if [[ $? ]]; then
         _error "Local repository has uncommitted changes."
         
@@ -357,9 +357,9 @@ _dotdotdot_sync
 
 move_to_repo="N"
 if [[ $_git_run == 0 ]]; then
-    _git_check_clean
+    _git_check_dirty
     echo "$DOTROOT" $?
-    _git_check_clean
+    _git_check_dirty
     if [[ $? != 0 ]]; then
         _warn "After running the scripts, you have uncommitted changes."
         echo -en "Do you want to examine these changes (y/N)?"
