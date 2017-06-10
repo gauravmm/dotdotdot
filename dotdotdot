@@ -196,8 +196,8 @@ STATUS_GIT_PULL="Pulling updates from upstream repository."
 STATUS_GIT_PUSH="Pushing updates to upstream repository."
 
 _git_check_dirty() {
-    echo $( cd $DOTROOT; git diff-index HEAD )
-    return $([[ -z $( cd $DOTROOT; git diff-index HEAD ) ]])
+    echo  ">" "$( cd $DOTROOT; git diff-index HEAD )" "<"
+    return $([[ -z "$( cd $DOTROOT; git diff-index HEAD )" ]])
 }
 
 _git_check_local() {
