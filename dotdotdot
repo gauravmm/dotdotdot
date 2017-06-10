@@ -203,6 +203,7 @@ _git_check_local() {
 
     git diff-index --quiet HEAD --
     local git_rv=$?
+    echo $git_rv
     if [[ $git_rv != 0 ]]; then
         _error "Local repository has uncommitted changes."
         
