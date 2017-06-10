@@ -1,7 +1,0 @@
-#!/bin/bash
-
-sleep 2
-echo "Test 2"
-sleep 10
-echo "Failing Test 2"
-exit 1

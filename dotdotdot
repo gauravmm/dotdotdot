@@ -47,6 +47,7 @@ _log_copy() {
     fi
 }
 
+INDENT="    "
 _debug()  { _log "DEBUG" "$1"; }
 _info()  { echo -e "$COLOR_INFO$2$1$COLOR_NULL"; _log "INFO" "$1"; }
 _warn()  { echo -e "$COLOR_WARN$2$1$COLOR_NULL"; _log "WARN" "$1"; }
@@ -167,18 +168,18 @@ _dotdotdot_sync() {
                 if [[ "$scuser" == "$CURR_USER" ]]; then
                     chmod u+x $scpath
                     if [[ 0 -eq $? ]]; then
-                        _debug "  changed permissions successfully."
+                        _debug "changed permissions successfully."
                     else
-                        _debug "  failed to change permissions."
+                        _debug "failed to change permissions."
                         _print_status_row $scname $STATUS_ERROR
                         _print_status_row_next
-                        _warn "    Automatic CHMOD of '$scpath' failed."                    
+                        _warn "Automatic CHMOD of '$scpath' failed." "$INDENT"                    
                         continue
                     fi
                 else
                     _print_status_row $scname $STATUS_ERROR 
                     _print_status_row_next
-                    _warn "Cannot automatically chmod '$scpath' because the file is owned by $scuser; you are $CURR_USER. Skipping..."
+                    _warn "Cannot automatically chmod '$scpath' because the file is owned by $scuser; you are $CURR_USER. Skipping..." "$INDENT"
                     continue
                 fi
             fi
@@ -193,16 +194,35 @@ STATUS_GIT_FETCH="Checking upstream repository for updates."
 STATUS_GIT_PULL="Pulling updates from upstream repository."
 STATUS_GIT_PUSH="Pushing updates to upstream repository."
 
-_dotdotdot_check_git() {
+_git_check_local() {
+    if ! git diff-index --quiet HEAD --; then
+        _error "Local repository has uncommitted changes."
+        
+        echo -en "Stash local changes (y/N)? "
+        read -n1 inst_stash
+        echo
+
+        if [[ $inst_stash == "y" || $inst_stash == "Y" ]]; then
+            _debug "Stashing..."
+            ( git stash save -u "Stashed by dotdotdot on $(date)." >/dev/null 2>&1 )
+        else
+            return 1
+        fi
+    fi
+
+    return 0
+}
+
+_git_check_remote() {
     # Check if we are in a git repository.
     if [[ ! "$(git rev-parse --is-inside-work-tree 2>/dev/null)" ]]; then
-        _warn "Not inside a git repository; updates are not available."
+        _warn "Not inside a git repository; updates are not available." "$INDENT"
         return 0
     fi
 
     local git_upstream=$( git rev-parse --abbrev-ref @{u} )
     if [[ ! $? ]]; then
-        _warn "No upstream configured; updates are not available."
+        _warn "No upstream configured; updates are not available." "$INDENT"
         return 0
     fi
     git_upstream=$(echo $git_upstream | sed 's/\// /g')
@@ -210,30 +230,30 @@ _dotdotdot_check_git() {
 
     _command "$STATUS_GIT_FETCH" "git ls-remote $git_upstream" 
     if [[ ! $? ]]; then
-        _warn "Upstream unreachable; updates are not available."
+        _warn "Upstream unreachable; updates are not available." "$INDENT"
         return 0
     fi
     local git_remote="$COMMAND_VAL"
     local git_remote_branch=$(echo $git_remote | cut -d " " -f 2 | cut -d "/" -f 3)
     git_remote=$(echo $git_remote | cut -d " " -f 1)
 
-    _log "DEBUG" "Remote: $git_remote"
-    _log "DEBUG" " Local: $(git rev-parse HEAD)"
+    _debug "Remote: $git_remote"
+    _debug " Local: $(git rev-parse HEAD)"
     
     if [[ $(git rev-parse HEAD) == $git_remote ]]; then
-        _info "No updates necessary. You have the latest from $git_remote_branch."
+        _info "No updates necessary. You have the latest from $git_remote_branch." "$INDENT"
         return 0
     else
         _command "$STATUS_GIT_PULL" "git pull $git_upstream"
         if [[ ! $? ]]; then
-            _error "Please pull and merge before running dotdotdot again."
+            _error "Please pull and merge before running dotdotdot again." "$INDENT"
             return 1
         fi
 
         if [[ $(git rev-parse HEAD) != $git_remote ]]; then
             _command "$STATUS_GIT_PUSH" "git push $git_upstream"
             if [[ ! $? ]]; then
-                _error "Please merge before running dotdotdot again."
+                _error "Please merge before running dotdotdot again." "$INDENT"
                 return 1
             fi
         fi
@@ -309,14 +329,25 @@ _info
 
 # Make sure the git repo is clean first.
 # If the repo is not clean, ask the user if they want to clean it.
+_git_check_local
+_git_run=$?
+
+if [[ $_git_run ]]; then
+    _error "Halting."
+    exit_unlock 0
+fi
 
 
 # Pull updates from the remote repository if necessary
 _info "Updating:" $COLOR_TITLE
-_dotdotdot_check_git
+_git_check_remote
 _git_run=$?
 _info
 
+if [[ ! $_git_run ]]; then
+    _error "Halting."
+    exit_unlock 0
+fi
 # Run the scripts
 _info "Running:" $COLOR_TITLE
 _dotdotdot_sync
