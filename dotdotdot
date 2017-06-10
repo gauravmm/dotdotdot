@@ -19,7 +19,8 @@ CURR_USER=$(whoami)
 # Locking:
 # Locking code modified from https://stackoverflow.com/a/1985512
 LOCKFD=99
-exit_unlock() { flock -u $LOCKFD; exit $1; }
+_unlock() { flock -u $LOCKFD; }
+exit_unlock() { _unlock; exit $1; }
 _prepare_locking() { eval "exec $LOCKFD>\"$1\""; trap exit_unlock EXIT; }
 # Obtain an exclusive lock immediately or fail:
 exlock_now() { _prepare_locking $1; flock -xn $LOCKFD; }
@@ -196,13 +197,13 @@ STATUS_GIT_PUSH="Pushing updates to upstream repository."
 
 _git_check_local() {
     # Check if we are in a git repository.
-    if [[ ! "$(git rev-parse --is-inside-work-tree 2>/dev/null)" ]]; then
+    if [[ ! "$(cd $DOTROOT; git rev-parse --is-inside-work-tree 2>/dev/null)" ]]; then
         _warn "Not inside a git repository; updates are not available." "$INDENT"
         return 1
     fi
 
-    ( git diff-index --quiet HEAD -- )
-    if [[ ! $? ]]; then
+    ( cd $DOTROOT; git diff-index --quiet HEAD -- )
+    if [[ $? != 0 ]]; then
         _error "Local repository has uncommitted changes."
         
         echo -en "Stash local changes (y/N)? "
@@ -211,7 +212,7 @@ _git_check_local() {
 
         if [[ $inst_stash == "y" || $inst_stash == "Y" ]]; then
             _debug "Stashing..."
-            ( git stash save -u "Stashed by dotdotdot on $(date)." >/dev/null 2>&1 )
+            ( cd $DOTROOT; git stash save -u "Stashed by dotdotdot on $(date)." >/dev/null 2>&1 )
         else
             return 2
         fi
@@ -221,7 +222,7 @@ _git_check_local() {
 }
 
 _git_check_remote() {
-    local git_upstream=$( git rev-parse --abbrev-ref @{u} )
+    local git_upstream=$( cd $DOTROOT; git rev-parse --abbrev-ref @{u} )
     if [[ ! $? ]]; then
         _warn "No upstream configured; updates are not available." "$INDENT"
         return 0
@@ -239,20 +240,20 @@ _git_check_remote() {
     git_remote=$(echo $git_remote | cut -d " " -f 1)
 
     _debug "Remote: $git_remote"
-    _debug " Local: $(git rev-parse HEAD)"
+    _debug " Local: $( cd $DOTROOT; git rev-parse HEAD)"
     
-    if [[ $(git rev-parse HEAD) == $git_remote ]]; then
+    if [[ $( cd $DOTROOT; git rev-parse HEAD) == $git_remote ]]; then
         _info "No updates necessary. You have the latest from $git_remote_branch." "$INDENT"
         return 0
     else
-        _command "$STATUS_GIT_PULL" "git pull $git_upstream"
+        _command "$STATUS_GIT_PULL" "git pull $git_upstream" $DOTROOT
         if [[ ! $? ]]; then
             _error "Please pull and merge before running dotdotdot again." "$INDENT"
             return 1
         fi
 
-        if [[ $(git rev-parse HEAD) != $git_remote ]]; then
-            _command "$STATUS_GIT_PUSH" "git push $git_upstream"
+        if [[ $( cd $DOTROOT; git rev-parse HEAD) != $git_remote ]]; then
+            _command "$STATUS_GIT_PUSH" "git push $git_upstream" $DOTROOT
             if [[ ! $? ]]; then
                 _error "Please merge before running dotdotdot again." "$INDENT"
                 return 1
@@ -296,12 +297,7 @@ while getopts ":vd:" optname; do
 done
 
 LOCKFILE="$DOTROOT/.dotdotdot"
-
-# Check that the .dotdotdot lockfile exists.
-if [[ ! -f $LOCKFILE ]]; then
-    _error "Lock file at $LOCKFILE is missing. Halting..."
-    exit 1
-fi
+touch "$LOCKFILE"
 
 if ! exlock_now $LOCKFILE ; then
     _error "Could not acquire lock for $LOCKFILE. Is another instance running?"
@@ -355,7 +351,23 @@ fi
 _info "Running:" $COLOR_TITLE
 _dotdotdot_sync
 
+move_to_repo="N"
+if [[ $_git_run == 0 ]]; then
+    ( cd $DOTROOT; git diff-index --quiet HEAD -- )
+    if [[ $? != 0 ]]; then
+        _warn "After running the scripts, you have uncommitted changes."
+        echo -en "Do you want to examine these changes (y/N)?"
+        read -n 1 -t 3 move_to_repo
+        echo
+    fi
+fi
+
 _info
 _info "Done!"
 
-exit_unlock 0
+_unlock 0
+
+if [[ $move_to_repo == "y" || $move_to_repo == "Y" ]]; then
+    cd $DOTROOT
+    git status
+fi
