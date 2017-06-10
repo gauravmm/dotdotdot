@@ -197,8 +197,8 @@ STATUS_GIT_PUSH="Pushing updates to upstream repository."
 
 _git_check_dirty() {
     echo  ">$( cd $DOTROOT; git diff-index HEAD )<"
-    local gdiff=$( cd $DOTROOT; git diff-index HEAD )
-    test ! -z "$gdiff"
+    ( cd $DOTROOT; git diff-index --quiet HEAD )
+    return $(( 1 - $? ))
 }
 
 _git_check_local() {
