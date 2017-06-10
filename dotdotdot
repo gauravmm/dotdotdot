@@ -354,6 +354,7 @@ _dotdotdot_sync
 move_to_repo="N"
 if [[ $_git_run == 0 ]]; then
     ( cd $DOTROOT; git diff-index --quiet HEAD -- )
+    echo $?
     if [[ $? != 0 ]]; then
         _warn "After running the scripts, you have uncommitted changes."
         echo -en "Do you want to examine these changes (y/N)?"
