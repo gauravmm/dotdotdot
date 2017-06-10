@@ -95,6 +95,49 @@ _print_status_row() {
 }
 _print_status_row_next() { echo; }
 
+_command() {
+    local scname=$1
+
+    local time_start="$(date +%s.%N)"
+    _print_status_row $scname $STATUS_WAITING
+    local scoutf=$(mktemp)
+    local scerrf=$(mktemp)
+    _debug "Running $scname"
+    if [[ -z $3 ]]; then
+        ( $2  >$scoutf 2>$scerrf )
+    else
+        ( cd $3; $2 >$scoutf 2>$scerrf )
+    fi
+    local scexit=$?
+
+    local duration=$(echo "scale=1; ($(date +%s.%N) - $time_start)/1" | bc -l)
+
+    _print_status_row_overwrite
+    # Check success
+    if [[ 0 -eq $scexit ]]; then
+        _print_status_row $scname $STATUS_SUCCESS $duration
+        _print_status_row_next
+        _log "DEBUG" "output:" "$INDENT_PREFIX"
+        _log_copy "$scoutf"
+        _log "DEBUG" "error:" "$INDENT_PREFIX"
+        _log_copy "$scerrf"
+    else
+        _print_status_row $scname $STATUS_ERROR $duration
+        _print_status_row_next
+        echo "$COLOR_ERROR$INDENT_START$COLOR_NULL"
+        _error "failed with code $scexit" "$INDENT_PREFIX" 
+        _error "output:" "$INDENT_PREFIX"
+        cat "$scoutf" | sed -e "s/^/$STD_PREFIX/"
+        _log_copy "$scoutf"
+        _error "error:" "$INDENT_PREFIX"
+        cat "$scerrf" | sed -e "s/^/$STD_PREFIX/"
+        _log_copy "$scerrf"
+        echo "$COLOR_ERROR$INDENT_END$COLOR_NULL"
+    fi
+
+    rm "$scoutf"
+    rm "$scerrf"
+}
 
 # MAIN SYNC FUNCTION
 _dotdotdot_sync() {
@@ -136,43 +179,7 @@ _dotdotdot_sync() {
             fi
         fi
 
-        local time_start="$(date +%s.%N)"
-
-        _print_status_row $scname $STATUS_WAITING
-        scoutf=$(mktemp)
-        scerrf=$(mktemp)
-        _debug "Running $scname"
-        ( cd $scdir; "./$(basename $scname)" >"$scoutf" 2>$scerrf ) & 
-        wait $!
-        scexit=$?
-
-        local duration=$(echo "scale=1; ($(date +%s.%N) - $time_start)/1" | bc -l)
-
-        _print_status_row_overwrite
-        # Check success
-        if [[ 0 -eq $scexit ]]; then
-            _print_status_row $scname $STATUS_SUCCESS $duration
-            _print_status_row_next
-            _log "DEBUG" "output:" "$INDENT_PREFIX"
-            _log_copy "$scoutf"
-            _log "DEBUG" "error:" "$INDENT_PREFIX"
-            _log_copy "$scerrf"
-        else
-            _print_status_row $scname $STATUS_ERROR $duration
-            _print_status_row_next
-            echo "$COLOR_ERROR$INDENT_START$COLOR_NULL"
-            _error "failed with code $scexit" "$INDENT_PREFIX" 
-            _error "output:" "$INDENT_PREFIX"
-            cat "$scoutf" | sed -e "s/^/$STD_PREFIX/"
-            _log_copy "$scoutf"
-            _error "error:" "$INDENT_PREFIX"
-            cat "$scerrf" | sed -e "s/^/$STD_PREFIX/"
-            _log_copy "$scerrf"
-            echo "$COLOR_ERROR$INDENT_END$COLOR_NULL"
-        fi
-
-        rm "$scoutf"
-        rm "$scerrf"
+        _command $scname "./$(basename $scname)" $scdir
 
     done <<< "$(cd $DOTROOT; find . -type f | grep .*\.dotsh$;)"
 }
