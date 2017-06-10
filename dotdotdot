@@ -357,6 +357,7 @@ fi
 _info "Running:" $COLOR_TITLE
 _dotdotdot_sync
 
+sleep 1
 move_to_repo="N"
 if [[ $_git_run == 0 ]]; then
     _git_check_dirty
