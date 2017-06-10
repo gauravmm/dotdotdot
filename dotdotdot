@@ -43,8 +43,8 @@ _log_copy() {
 }
 
 _debug()  { _log "DEBUG" "$1"; }
-_info()  { echo -e "$COLOR_INFO$1$COLOR_NULL"; _log "INFO" "$1"; }
-_warn()  { echo -e "$COLOR_WARN$1$COLOR_NULL"; _log "WARN" "$1"; }
+_info()  { echo -e "$COLOR_INFO$2$1$COLOR_NULL"; _log "INFO" "$1"; }
+_warn()  { echo -e "$COLOR_WARN$2$1$COLOR_NULL"; _log "WARN" "$1"; }
 _error() { echo -e "$COLOR_ERROR$2$1$COLOR_NULL";_log "ERROR" "$1"; }
 
 STATUS_COLOR=("\e[1;91m" "\e[1;93m" "\e[1;92m")
@@ -205,6 +205,10 @@ while read -r scname; do
     if [[ 0 -eq $scexit ]]; then
         _print_status_row $scname $STATUS_SUCCESS $duration
         _print_status_row_next
+        _log "DEBUG" "output:" "$INDENT_PREFIX"
+        _log_copy "$scoutf"
+        _log "DEBUG" "error:" "$INDENT_PREFIX"
+        _log_copy "$scerrf"
     else
         _print_status_row $scname $STATUS_ERROR $duration
         _print_status_row_next
