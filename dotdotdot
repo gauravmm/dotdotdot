@@ -201,9 +201,8 @@ _git_check_local() {
         return 1
     fi
 
-    local git_rv=$(git diff-index HEAD --)
-    echo $git_rv
-    if [[ ! -z $git_rv ]]; then
+    ( git diff-index --quiet HEAD -- )
+    if [[ ! $? ]]; then
         _error "Local repository has uncommitted changes."
         
         echo -en "Stash local changes (y/N)? "
