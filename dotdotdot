@@ -202,6 +202,7 @@ _git_check_local() {
     fi
 
     local git_rv=$(git diff-index HEAD --)
+    echo $git_rv
     if [[ ! -z $git_rv ]]; then
         _error "Local repository has uncommitted changes."
         
