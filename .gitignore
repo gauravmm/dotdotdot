@@ -2,6 +2,7 @@
 dotfiles/dot.log
 dotfiles/.dotdotdot
 .updated
+.update_lock
 
 # vscode
 .vscode/*
