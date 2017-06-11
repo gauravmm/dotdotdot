@@ -2,7 +2,7 @@
 
 cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-if [[ -e "dotdotdot" ]]; then 
+if [[ ! -x "dotdotdot" ]]; then 
     echo "Error: run update in the same directory as dotdotdot."
     exit 1
 fi
@@ -14,13 +14,13 @@ _prepare_locking() { eval "exec $ULOCKFD>\"$1\""; trap exit_unlock EXIT; }
 # Obtain an exclusive lock immediately or fail:
 exlock_now() { _prepare_locking $1; flock -xn $ULOCKFD; }
 
-if ! exlock_now $LOCKFILE ; then
+if ! exlock_now ".updated" ; then
     exit_unlock 1
 fi
 
-if [[ -e ".updated" ]]; then
-    t_prev="$(cat .updated)"
-    t_curr="$(date '+%s')"
+t_prev="$(cat .updated)"
+t_curr="$(date '+%s')"
+if [[ ! -z "$t_prev" ]]; then
     t_diff=$(($t_curr - $t_prev))
     if [[ $t_diff -lt 36000 ]]; then
         exit 0
