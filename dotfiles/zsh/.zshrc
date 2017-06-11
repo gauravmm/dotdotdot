@@ -58,6 +58,13 @@ fi
 export SESSION_TYPE=$SESSION_TYPE
 
 #
+# dotdotdot updater
+#
+if [[ -x ~/.dotdotdot/update ]]; then
+	( ~/.dotdotdot/update )
+fi
+
+#
 # zgen install
 #
 source "${HOME}/.zgen/zgen.zsh"
