@@ -1,0 +1,378 @@
+#!/bin/bash
+
+#
+# Configuration Options
+#
+AUTO_CHMOD=true
+DOTLOG="dot.log"
+_SCRIPT_DEBUG=false
+
+
+#
+# Utility Functions/Values
+#
+
+DOTLOG_ENABLED=false
+CURR_USER=$(whoami)
+
+
+# Locking:
+# Locking code modified from https://stackoverflow.com/a/1985512
+LOCKFD=99
+_unlock() { flock -u $LOCKFD; }
+exit_unlock() { _unlock; exit $1; }
+_prepare_locking() { eval "exec $LOCKFD>\"$1\""; trap exit_unlock EXIT; }
+# Obtain an exclusive lock immediately or fail:
+exlock_now() { _prepare_locking $1; flock -xn $LOCKFD; }
+
+
+# Output and Logging:
+COLOR_TITLE=$(printf "\e[1;94m")
+COLOR_INFO=$(printf "\e[0;94m")
+COLOR_WARN=$(printf "\e[0;93m")
+COLOR_ERROR=$(printf "\e[0;91m")
+COLOR_NULL=$(printf "\e[0m")
+_log() {
+    if [[ $DOTLOG != "" && $DOTLOG_ENABLED == true ]]; then
+        if [[ $1 != "" ]]; then
+            echo -e "[$1]\t$2" >> $DOTLOG
+        else
+            echo >> $DOTLOG
+        fi
+    fi
+}
+_log_copy() {
+    if [[ $DOTLOG != "" && $DOTLOG_ENABLED == true ]]; then
+        cat $1 >> $DOTLOG
+        echo "--------------------" >> $DOTLOG
+    fi
+}
+
+INDENT="    "
+_debug()  { _log "DEBUG" "$1"; }
+_info()  { echo -e "$COLOR_INFO$2$1$COLOR_NULL"; _log "INFO" "$1"; }
+_warn()  { echo -e "$COLOR_WARN$2$1$COLOR_NULL"; _log "WARN" "$1"; }
+_error() { echo -e "$COLOR_ERROR$2$1$COLOR_NULL";_log "ERROR" "$1"; }
+
+
+# Pretty-printing Status:
+STATUS_COLOR=("\e[1;91m" "\e[1;93m" "\e[1;92m")
+STATUS_TEXT=(" ERROR " "RUNNING" "SUCCESS")
+STATUS_ERROR=0
+STATUS_WAITING=1
+STATUS_SUCCESS=2
+
+DURATION_IMMEDIATE=" --.-s"
+COLOR_TIME="\e[0;94m"
+
+ INDENT_START="   ╓╥────────────┈"
+INDENT_PREFIX="   ║║ "
+   INDENT_END="   ╙╨────────────┈"
+
+STD_PREFIX="$COLOR_ERROR$INDENT_PREFIX$COLOR_NULL"
+
+SCREEN_WIDTH=$(tput cols)
+_print_status_row_overwrite() { echo -ne "\r"; }
+_print_status_row() {
+    # 10 columns for the "[STATUS] "
+    # 7 columns for the duration
+    cols_rem=$(( $SCREEN_WIDTH - ${#1} - 10 - 7 ))
+    echo -ne "${STATUS_COLOR[$2]}[${STATUS_TEXT[$2]}]$COLOR_NULL $COLOR_TIME"
+    
+    # Produce string output
+    case "$3" in
+        "")
+            echo -ne $DURATION_IMMEDIATE
+            ;;
+        "0")
+            echo -ne "  .0s"
+            ;;
+        *)
+            printf "%4ss" "$3"
+            ;;
+    esac
+
+    echo -ne "$COLOR_NULL $1"
+    head -c $cols_rem < /dev/zero | tr '\0' ' '
+}
+_print_status_row_next() { echo; }
+
+COMMAND_VAL=""
+_command() {
+    local scname="$1"
+
+    local time_start="$(date +%s.%N)"
+    _print_status_row "$scname" $STATUS_WAITING
+    local scoutf=$(mktemp)
+    local scerrf=$(mktemp)
+    _debug "Running $scname"
+    if [[ -z $3 ]]; then
+        ( $2  >$scoutf 2>$scerrf )
+    else
+        ( cd $3; $2 >$scoutf 2>$scerrf )
+    fi
+    local scexit=$?
+
+    local duration=$(echo "scale=1; ($(date +%s.%N) - $time_start)/1" | bc -l)
+
+    _print_status_row_overwrite
+    # Check success
+    if [[ 0 -eq $scexit ]]; then
+        _print_status_row "$scname" $STATUS_SUCCESS $duration
+        _print_status_row_next
+        _log "DEBUG" "output:" "$INDENT_PREFIX"
+        _log_copy "$scoutf"
+        _log "DEBUG" "error:" "$INDENT_PREFIX"
+        _log_copy "$scerrf"
+    else
+        _print_status_row "$scname" $STATUS_ERROR $duration
+        _print_status_row_next
+        echo "$COLOR_ERROR$INDENT_START$COLOR_NULL"
+        _error "failed with code $scexit" "$INDENT_PREFIX" 
+        _error "output:" "$INDENT_PREFIX"
+        cat "$scoutf" | sed -e "s/^/$STD_PREFIX/"
+        _log_copy "$scoutf"
+        _error "error:" "$INDENT_PREFIX"
+        cat "$scerrf" | sed -e "s/^/$STD_PREFIX/"
+        _log_copy "$scerrf"
+        echo "$COLOR_ERROR$INDENT_END$COLOR_NULL"
+    fi
+
+    COMMAND_VAL=$(cat $scoutf)
+
+    rm "$scoutf"
+    rm "$scerrf"
+
+    return $scexit
+}
+
+# MAIN SYNC FUNCTION
+_dotdotdot_sync() {
+    # Loop over all .dotsh files
+    while read -r scname; do
+        scname="${scname#./}"
+        scpath="$DOTROOT/$scname"
+        scdir="$(dirname $scpath)/"
+        
+        _log
+        _debug "With $scname"
+        _debug "      at $scpath"
+        _debug "    from $scdir"
+
+        # Check if we have exec permissions on the file, and chmod
+        # if AUTO_CHMOD is set.
+        if [[ ! -x "$scpath" ]]; then
+            _debug "  script is not executable."
+            if [[ "$AUTO_CHMOD" == true ]]; then
+                # Make sure you are the file owner:
+                scuser="$(stat -c %U $scpath)"
+                if [[ "$scuser" == "$CURR_USER" ]]; then
+                    chmod u+x $scpath
+                    if [[ 0 -eq $? ]]; then
+                        _debug "changed permissions successfully."
+                    else
+                        _debug "failed to change permissions."
+                        _print_status_row $scname $STATUS_ERROR
+                        _print_status_row_next
+                        _warn "Automatic CHMOD of '$scpath' failed." "$INDENT"                    
+                        continue
+                    fi
+                else
+                    _print_status_row $scname $STATUS_ERROR 
+                    _print_status_row_next
+                    _warn "Cannot automatically chmod '$scpath' because the file is owned by $scuser; you are $CURR_USER. Skipping..." "$INDENT"
+                    continue
+                fi
+            fi
+        fi
+        
+        _command $scname "./$(basename $scname)" $scdir
+
+    done <<< "$(cd $DOTROOT; find . -type f | grep .*\.dotsh$;)"
+}
+
+STATUS_GIT_FETCH="Checking upstream repository for updates."
+STATUS_GIT_PULL="Pulling updates from upstream repository."
+STATUS_GIT_PUSH="Pushing updates to upstream repository."
+
+_git_check_dirty() {
+    ( cd $DOTROOT; git status 2>&1 1>/dev/null; git diff-files --quiet )
+    return $(( 1 - $? ))
+}
+
+_git_check_local() {
+    # Check if we are in a git repository.
+    if [[ ! "$(cd $DOTROOT; git rev-parse --is-inside-work-tree 2>/dev/null)" ]]; then
+        _warn "Not inside a git repository; updates are not available." "$INDENT"
+        return 1
+    fi
+
+    
+    if _git_check_dirty; then
+        _error "Local repository has uncommitted changes."
+        
+        echo -en "Stash local changes (y/N)? "
+        read -n1 inst_stash
+        echo
+
+        if [[ $inst_stash == "y" || $inst_stash == "Y" ]]; then
+            _debug "Stashing..."
+            ( cd $DOTROOT; git stash save -u "Stashed by dotdotdot on $(date)." >/dev/null 2>&1 )
+        else
+            return 2
+        fi
+    fi
+
+    return 0
+}
+
+_git_check_remote() {
+    local git_upstream=$( cd $DOTROOT; git rev-parse --abbrev-ref @{u} )
+    if [[ ! $? ]]; then
+        _warn "No upstream configured; updates are not available." "$INDENT"
+        return 0
+    fi
+    git_upstream=$(echo $git_upstream | sed 's/\// /g')
+
+
+    _command "$STATUS_GIT_FETCH" "git ls-remote $git_upstream" 
+    if [[ ! $? ]]; then
+        _warn "Upstream unreachable; updates are not available." "$INDENT"
+        return 0
+    fi
+    local git_remote="$COMMAND_VAL"
+    local git_remote_branch=$(echo $git_remote | cut -d " " -f 2 | cut -d "/" -f 3)
+    git_remote=$(echo $git_remote | cut -d " " -f 1)
+
+    _debug "Remote: $git_remote"
+    _debug " Local: $( cd $DOTROOT; git rev-parse HEAD)"
+    
+    if [[ $( cd $DOTROOT; git rev-parse HEAD) == $git_remote ]]; then
+        _info "No updates necessary. You have the latest from $git_remote_branch." "$INDENT"
+        return 0
+    else
+        _command "$STATUS_GIT_PULL" "git pull $git_upstream" $DOTROOT
+        if [[ ! $? ]]; then
+            _error "Please pull and merge before running dotdotdot again." "$INDENT"
+            return 1
+        fi
+
+        if [[ $( cd $DOTROOT; git rev-parse HEAD) != $git_remote ]]; then
+            _command "$STATUS_GIT_PUSH" "git push $git_upstream" $DOTROOT
+            if [[ ! $? ]]; then
+                _error "Please merge before running dotdotdot again." "$INDENT"
+                return 1
+            fi
+        fi
+    fi
+
+    return 0
+}
+
+#
+# Start of Script
+#
+
+# From https://stackoverflow.com/a/246128
+DOTROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/dotfiles"
+
+while getopts ":vd:" optname; do
+    case "$optname" in
+        "v")
+            _SCRIPT_DEBUG=true
+            _debug "Verbose mode on."
+            ;;
+        "d")
+            DOTROOT="$OPTARG"
+            _debug "DOTROOT set to $DOTROOT."
+            ;;
+        "?")
+            echo "Unknown option $OPTARG. Halting..."
+            exit 1
+            ;;
+        ":") 
+            _error "Value expected for option -$OPTARG. Halting..."
+            exit 1
+            ;;
+        *)
+            _error "Unknown error while processing options. Halting..."
+            exit 1
+            ;;
+    esac
+done
+
+LOCKFILE="$DOTROOT/.dotdotdot"
+touch "$LOCKFILE"
+
+if ! exlock_now $LOCKFILE ; then
+    _error "Could not acquire lock for $LOCKFILE. Is another instance running?"
+    _error "Halting..."
+    exit_unlock 1
+fi
+
+# Enable logging
+if [[ $DOTLOG != "" ]]; then
+    DOTLOG="$DOTROOT/$DOTLOG"
+    truncate --size 0 "$DOTLOG"
+    DOTLOG_ENABLED=true
+    _debug "Logging for dotdotdot started"
+    _debug "    on $(date)"
+    _debug "    at $DOTROOT"
+fi
+
+_info
+_info "    | |       _     | |       _     | |       _   "
+_info "  __| | ___ _| |_ __| | ___ _| |_ __| | ___ _| |_ "
+_info " / _  |/ _ (_   _) _  |/ _ (_   _) _  |/ _ (_   _)"
+_info "( (_| | |_| || |( (_| | |_| || |( (_| | |_| || |_ "
+_info " \____|\___/ \__)\____|\___/ \__)\____|\___/ \__) "
+_info
+_info
+
+# Make sure the git repo is clean first.
+# If the repo is not clean, ask the user if they want to clean it.
+_git_check_local
+_git_run=$?
+
+if [[ $_git_run == 2 ]]; then
+    _error "Halting."
+    exit_unlock 0
+fi
+
+if [[ $_git_run == 0 ]]; then
+    # Pull updates from the remote repository if necessary
+    _info "Updating:" $COLOR_TITLE
+    _git_check_remote
+    _git_run=$?
+    _info
+
+    if [[ ! $_git_run ]]; then
+        _error "Halting."
+        exit_unlock 0
+    fi
+fi
+
+# Run the scripts
+_info "Running:" $COLOR_TITLE
+_dotdotdot_sync
+
+sleep 1
+move_to_repo="N"
+if [[ $_git_run == 0 ]]; then    
+    if _git_check_dirty; then
+        _warn "After running the scripts, you have uncommitted changes."
+        echo -en "Do you want to examine these changes (y/N)?"
+        read -n 1 -t 3 move_to_repo
+        echo
+    fi
+fi
+
+_info
+_info "Done!"
+
+_unlock 0
+
+if [[ $move_to_repo == "y" || $move_to_repo == "Y" ]]; then
+    cd $DOTROOT
+    git status
+fi
