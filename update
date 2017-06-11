@@ -1,0 +1,42 @@
+#!/bin/bash
+
+cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+if [[ -e "dotdotdot" ]]; then 
+    echo "Error: run update in the same directory as dotdotdot."
+    exit 1
+fi
+
+ULOCKFD=199
+_unlock() { flock -u $ULOCKFD; }
+exit_unlock() { _unlock; exit $1; }
+_prepare_locking() { eval "exec $ULOCKFD>\"$1\""; trap exit_unlock EXIT; }
+# Obtain an exclusive lock immediately or fail:
+exlock_now() { _prepare_locking $1; flock -xn $ULOCKFD; }
+
+if ! exlock_now $LOCKFILE ; then
+    exit_unlock 1
+fi
+
+if [[ -e ".updated" ]]; then
+    t_prev="$(cat .updated)"
+    t_curr="$(date '+%s')"
+    t_diff=$(($t_curr - $t_prev))
+    if [[ $t_diff -lt 36000 ]]; then
+        exit 0
+    fi
+fi
+
+# Ask if we can update:
+echo -en "Do you want to run dotdotdot to update your configuration (Y/n)?"
+read -n 1 -t 2 toupdate
+echo
+
+if [[ $toupdate != "n" && $toupdate != "N" ]]; then
+    ( ./dotdotdot )
+    if [[ $? ]]; then
+        date '+%s' > .updated
+    fi
+fi
+
+exit_unlock 0
