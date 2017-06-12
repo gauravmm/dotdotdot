@@ -6,5 +6,6 @@
     "editor.disableMonospaceOptimizations": true,
     "files.associations": {
         "*.dotsh": "shellscript"
-    }
+    },
+    "git.enableSmartCommit": true
 }
