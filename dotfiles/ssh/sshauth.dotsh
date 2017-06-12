@@ -1,0 +1,6 @@
+#!/bin/bash
+
+if ! cat ~/.ssh/authorized_keys | grep "gaurav@gauravmanek.com"; then
+    cat gauravmm_yk.pub >> ~/.ssh/authorized_keys
+    chmod 0600 ~/.ssh/authorized_keys
+fi
