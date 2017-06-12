@@ -7,23 +7,28 @@ if [[ ! -x "dotdotdot" ]]; then
     exit 1
 fi
 
+LOCKFILE=".update_lock"
 ULOCKFD=199
 _unlock() { flock -u $ULOCKFD; }
-exit_unlock() { _unlock; rm .update_lock 2>/dev/null ; exit $1; }
-_prepare_locking() { eval "exec $ULOCKFD>\"$1\""; trap exit_unlock EXIT; }
+exit_unlock() { trap - EXIT; _unlock; rm $LOCKFILE; exit $1; }
 # Obtain an exclusive lock immediately or fail:
-exlock_now() { _prepare_locking $1; flock -xn $ULOCKFD; }
+exlock_now() {
+    eval "exec $ULOCKFD>\"$LOCKFILE\"";
+    if ! flock -xn $ULOCKFD ; then
+        exit 0
+    fi
+    trap "_unlock; rm $LOCKFILE;" EXIT;
+}
 
-if ! exlock_now ".update_lock" ; then
-    exit_unlock 1
-fi
+# Acquire the lock or fail.
+exlock_now
 
 t_prev="$(cat .updated 2>/dev/null)"
 t_curr="$(date '+%s')"
 if [[ ! -z "${t_prev}" ]]; then
     t_diff=$(($t_curr - $t_prev))
     if [[ $t_diff -lt 36000 ]]; then
-        exit 0
+        exit_unlock 0   
     fi
 fi
 
