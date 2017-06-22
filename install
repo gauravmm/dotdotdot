@@ -7,7 +7,7 @@ fi
 
 cd ~
 
-if ! git clone --depth 1 git@github.com:gauravmm/dotdotdot.git .dotdotdot ; then
+if ! git clone --depth 1 https://github.com/gauravmm/dotdotdot.git .dotdotdot ; then
     echo "Error: cannot clone repository, try installing manually."
     exit 1
 fi
