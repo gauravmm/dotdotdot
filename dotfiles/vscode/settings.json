@@ -7,5 +7,6 @@
     "files.associations": {
         "*.dotsh": "shellscript"
     },
-    "git.enableSmartCommit": true
+    "git.enableSmartCommit": true,
+    "editor.renderWhitespace": "all"
 }
