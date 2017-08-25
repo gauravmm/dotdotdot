@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+
+if ! which polybar; then
+    echo "Polybar is not installed."
+    exit 1
+fi
+
+rsync -rtuv config/* ~/.config/polybar/
+rsync -rtuv ~/.config/polybar/* config/
