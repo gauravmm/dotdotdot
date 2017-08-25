@@ -4,8 +4,8 @@
 width = 100%
 height = 34
 
-background = #99000000
-foreground = #ccffffff
+background = #CC000000
+foreground = #CCFFFFFF
 
 line-color = ${bar/bottom.background}
 line-size = 16
