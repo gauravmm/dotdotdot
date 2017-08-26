@@ -1,5 +1,8 @@
+! URxvt
+! 1.0
+URxvt.depth:        32
 URxvt.foreground:   #cccccc
-URxvt.background:   #000000
+URxvt.background:   rgba:0000/0000/0000/c800
 URxvt.cursorColor:  #cccccc
 URxvt.color0:       #1e1a1b
 URxvt.color8:       #403a3d
@@ -18,7 +21,6 @@ URxvt.color14:      #607fd9
 URxvt.color7:       #c0c0c0
 URxvt.color15:      #ffffff
 
-URxvt.font: xft:monaco:size=9
-URxvt.scrollBar: false
-URxvt.transparent:   true
-URxvt.shading:       20
+URxvt.font:         xft:monaco:size=12
+URxvt.scrollBar:    false
+! end
