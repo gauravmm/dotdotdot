@@ -39,12 +39,7 @@ alias ll='ls -al'
 alias clear='echo -ne "\e[0;$[LINES]r"'
 
 # Default Editor
-command -v subl 1>/dev/null 2>&1
-if [ $? == "0" ]; then
-	export EDITOR='subl -w'
-else
-	export EDITOR='nano'
-fi
+export EDITOR='nano'
 
 # Detect if this is an ssh session
 SESSION_TYPE="local"
@@ -84,3 +79,6 @@ if ! zgen saved; then
 	# generate the init script from plugins above
 	zgen save
 fi
+
+# Add dotdotdot to PATH
+export PATH=$PATH:~/.dotdotdot/bin
