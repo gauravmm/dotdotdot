@@ -24,7 +24,7 @@ rsync -rtuv $CONFDIR/keybindings.json keybindings.json
 INSTALLED_HIST=$CONFDIR/installed.extensions
 
 if [[ $(sha1sum -b $(which code)) == "32755432101ee55c457c6cabbee9f637e7b5f32f */usr/bin/code" ]]; then
-    echo "Incompatible version of Visual Studio Code. Cannot synchonize extensions.">2
+    echo "Incompatible version of Visual Studio Code. Cannot synchonize extensions.">&2
     exit 1
 fi
 
