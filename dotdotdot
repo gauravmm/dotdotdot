@@ -144,7 +144,6 @@ _command() {
         _print_status_row_next
         echo "$COLOR_ERROR$INDENT_START$COLOR_NULL"
         _error "failed with code $scexit" "$INDENT_PREFIX" 
-        _error "error:" "$INDENT_PREFIX"
         cat "$scerrf" | sed -e "s/^/$STD_PREFIX/"
         _log_copy "$scoutf"
         _log_copy "$scerrf"
