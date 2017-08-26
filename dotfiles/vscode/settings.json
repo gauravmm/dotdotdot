@@ -1,6 +1,6 @@
 {
-    "window.zoomLevel": 1.25,
-    "editor.fontFamily": "'Fira Code', 'Droid Sans Mono', 'Courier New', monospace, 'Droid Sans Fallback'",
+    "window.zoomLevel": 1.0,
+    "editor.fontFamily": "'Fira Code', 'Inconsolata', 'Droid Sans Mono', 'Courier New', monospace, 'Droid Sans Fallback'",
     "editor.fontLigatures": true,
     "terminal.integrated.fontLigatures": true,
     "editor.disableMonospaceOptimizations": true,
@@ -17,5 +17,6 @@
         "typescript",
         "typescriptreact"
     ],
-    "python.linting.enabled": false
+    "python.linting.enabled": false,
+    "window.menuBarVisibility": "toggle"
 }
