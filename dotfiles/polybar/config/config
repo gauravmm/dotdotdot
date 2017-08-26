@@ -4,8 +4,8 @@
 width = 100%
 height = 34
 
-background = #CC000000
-foreground = #CCFFFFFF
+background = #AA000000
+foreground = #FFFFFFFF
 
 line-color = ${bar/bottom.background}
 line-size = 16
@@ -14,8 +14,8 @@ spacing = 2
 padding-right = 5
 module-margin = 3
 
-font-0 = NotoSans-Regular:size=10;-1
-font-1 = NotoSans-Regular:size=10;-2
+font-0 = NotoSans-Regular:size=11;-1
+font-1 = unifont:size=11;0
 font-2 = MaterialIcons-Regular:size=12;0
 font-3 = FontAwesome:size=12;0
 
@@ -39,9 +39,9 @@ padding-right = 4
 module-margin-left = 0
 module-margin-right = 6
 
-font-0 = NotoSans-Regular:size=10;-1
-font-1 = NotoSans-Regular:size=10;-3
-font-2 = FontAwesome:size=10;0
+font-0 = NotoSans-Regular:size=11;-1
+font-1 = unifont:size=11;-3
+font-2 = FontAwesome:size=11;0
 
 modules-left = i3
 modules-center =  mpd
@@ -54,13 +54,8 @@ label = %title:0:70:...%
 [module/backlight]
 type = internal/xbacklight
 card = intel_backlight
-format = <ramp> <label>
-
-ramp-0 = 🌕
-ramp-1 = 🌔
-ramp-2 = 🌓
-ramp-3 = 🌒
-ramp-4 = 🌑
+format = <label>
+label = ☀ %{T1}%percentage%%%{T-}
 
 [module/battery]
 type = internal/battery
@@ -230,7 +225,7 @@ type = internal/network
 interface = enp0s31f6
 interval = 3.0
 
-label-connected =    %{T3}%local_ip%%{T-}
+label-connected =    %{T1}%local_ip%%{T-}
 label-disconnected-foreground = #66
 
 [module/volume]

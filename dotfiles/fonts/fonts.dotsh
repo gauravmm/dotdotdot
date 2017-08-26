@@ -1,3 +1,4 @@
 #!/bin/bash
 
+mkdir -p ~/.fonts
 rsync --exclude "*.dotsh" -rc "./" ~/.fonts

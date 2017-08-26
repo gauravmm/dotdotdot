@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# Check that prerequisites are installed
+for cmd in git rsync; do
+    which "$cmd" > /dev/null 2>&1
+    if [[ $? != 0 ]]; then
+        echo "$cmd is missing; install it to run dotdotdot"
+        exit 1
+    fi
+done
+
 #
 # Configuration Options
 #
@@ -57,11 +66,12 @@ _error() { echo -e "$COLOR_ERROR$2$1$COLOR_NULL";_log "ERROR" "$1"; }
 
 
 # Pretty-printing Status:
-STATUS_COLOR=("\e[1;91m" "\e[1;93m" "\e[1;92m")
-STATUS_TEXT=(" ERROR " "RUNNING" "SUCCESS")
+STATUS_COLOR=("\e[1;91m" "\e[1;93m" "\e[1;92m" "\e[1;95m")
+STATUS_TEXT=(" ERROR " "RUNNING" "SUCCESS" "SKIPPED")
 STATUS_ERROR=0
 STATUS_WAITING=1
 STATUS_SUCCESS=2
+STATUS_SKIPPED=3
 
 DURATION_IMMEDIATE=" --.-s"
 COLOR_TIME="\e[0;94m"
@@ -118,8 +128,12 @@ _command() {
 
     _print_status_row_overwrite
     # Check success
-    if [[ 0 -eq $scexit ]]; then
-        _print_status_row "$scname" $STATUS_SUCCESS $duration
+    if [[ 0 -eq $scexit || 127 -eq $scexit ]]; then
+        if [[ 0 -eq $scexit ]]; then
+            _print_status_row "$scname" $STATUS_SUCCESS $duration
+        else
+            _print_status_row "$scname" $STATUS_SKIPPED $duration
+        fi
         _print_status_row_next
         _log "DEBUG" "output:" "$INDENT_PREFIX"
         _log_copy "$scoutf"
