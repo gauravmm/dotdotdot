@@ -19,8 +19,8 @@ font-1 = unifont:size=11;0
 font-2 = MaterialIcons-Regular:size=12;0
 font-3 = FontAwesome:size=12;0
 
-modules-left = powermenu xwindow
-modules-right = volume backlight wireless-network wired-network battery date
+modules-left = xwindow
+modules-right = volume backlight wireless-network wired-network battery date powermenu
 
 [bar/bottom]
 monitor = eDP-1
@@ -240,32 +240,12 @@ ramp-volume-2 = 
 ramp-volume-3 = 
 
 [module/powermenu]
-type = custom/menu
-
-format-padding = 4
-
-label-open = 
-label-close = 
-label-separator = |
-
-menu-0-0 = Power off
-menu-0-0-foreground = #fba922
-menu-0-0-exec = menu_open-2
-menu-0-1 = Reboot
-menu-0-1-foreground = #fba922
-menu-0-1-exec = menu_open-1
-
-menu-1-0 = Reboot
-menu-1-0-foreground = #fba922
-menu-1-0-exec = sudo reboot
-
-menu-2-0 = Power off
-menu-2-0-foreground = #fba922
-menu-2-0-exec = sudo poweroff
+type = custom/text
+format-padding = 3
+content = 
+click-left = ~/.config/polybar/powermenu.sh
 
 [module/clock]
 type = internal/date
 interval = 2
 date = %%{F#999}%Y-%m-%d%%{F-}  %%{F#fff}%H:%M%%{F-}
-
-; vim:ft=dosini
