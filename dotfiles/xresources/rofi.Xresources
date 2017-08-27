@@ -11,4 +11,8 @@ rofi.separator-style:                solid
 rofi.location:                       0
 rofi.hide-scrollbar:                 true
 rofi.font: Monaco 12
+! Width, as a percentage of the desktop
+rofi.width: 100
+! All-around padding, pixels
+rofi.padding: 500
 ! end
