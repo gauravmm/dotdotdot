@@ -18,5 +18,6 @@
         "typescriptreact"
     ],
     "python.linting.enabled": false,
-    "window.menuBarVisibility": "toggle"
+    "window.menuBarVisibility": "toggle",
+    "workbench.colorTheme": "Arc Dark"
 }
