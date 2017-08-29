@@ -80,5 +80,5 @@ if ! zgen saved; then
 	zgen save
 fi
 
-# Add dotdotdot to PATH
-export PATH=$PATH:~/.dotdotdot/bin
+# Add dotdotdot and scripts to PATH
+export PATH=$PATH:~/.dotdotdot/bin:~/scripts
