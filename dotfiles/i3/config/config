@@ -107,7 +107,7 @@ bindsym $mod+Shift+r restart
 bindsym $mod+Shift+l exec ~/.config/polybar/powermenu.sh
 
 # Quick opener
-bindsym $mod+Shift+o exec ~/scripts/quickopen.sh
+bindsym $mod+Shift+o exec ~/scripts/quickopen
 # lock
 bindsym $mod+L exec i3lock-wrapper
 

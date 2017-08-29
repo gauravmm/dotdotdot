@@ -1,0 +1,4 @@
+#!/bin/bash
+
+mkdir -p ~/scripts
+rsync --exclude "*.dotsh" -rc "./" ~/scripts
