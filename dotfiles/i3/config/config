@@ -103,11 +103,14 @@ bindsym $mod+Ctrl+Right workspace next
 bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
-# exit i3 (logs you out of your X session)
-bindsym $mod+Shift+l exec ~/.config/polybar/powermenu.sh
+# power menu
+bindsym $mod+Shift+l exec ~/scripts/powermenu.sh
+# xrandr
+bindsym $mod+p exec ~/scripts/extendscreen.sh
+
 
 # Quick opener
-bindsym $mod+Shift+o exec ~/scripts/quickopen
+bindsym $mod+Shift+o exec ~/scripts/quickopen.sh
 # lock
 bindsym $mod+L exec i3lock-wrapper
 
