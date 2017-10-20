@@ -20,5 +20,6 @@
     "python.linting.enabled": false,
     "window.menuBarVisibility": "toggle",
     "workbench.colorTheme": "Arc Dark",
-    "workbench.activityBar.visible": false
+    "workbench.activityBar.visible": false,
+    "files.autoSave": "afterDelay"
 }
