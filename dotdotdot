@@ -82,14 +82,14 @@ INDENT_PREFIX="   ║║ "
 
 STD_PREFIX="$COLOR_ERROR$INDENT_PREFIX$COLOR_NULL"
 
-SCREEN_WIDTH=$(tput cols)
+SCREEN_WIDTH=$(tput cols 2>/dev/null || stty size | cut \d\  -f2)
 _print_status_row_overwrite() { echo -ne "\r"; }
 _print_status_row() {
     # 10 columns for the "[STATUS] "
     # 7 columns for the duration
     cols_rem=$(( $SCREEN_WIDTH - ${#1} - 10 - 7 ))
     echo -ne "${STATUS_COLOR[$2]}[${STATUS_TEXT[$2]}]$COLOR_NULL $COLOR_TIME"
-    
+
     # Produce string output
     case "$3" in
         "")
@@ -143,7 +143,7 @@ _command() {
         _print_status_row "$scname" $STATUS_ERROR $duration
         _print_status_row_next
         echo "$COLOR_ERROR$INDENT_START$COLOR_NULL"
-        _error "failed with code $scexit" "$INDENT_PREFIX" 
+        _error "failed with code $scexit" "$INDENT_PREFIX"
         cat "$scerrf" | sed -e "s/^/$STD_PREFIX/"
         _log_copy "$scoutf"
         _log_copy "$scerrf"
@@ -165,7 +165,7 @@ _dotdotdot_sync() {
         scname="${scname#./}"
         scpath="$DOTROOT/$scname"
         scdir="$(dirname $scpath)/"
-        
+
         _log
         _debug "With $scname"
         _debug "      at $scpath"
@@ -186,18 +186,18 @@ _dotdotdot_sync() {
                         _debug "failed to change permissions."
                         _print_status_row $scname $STATUS_ERROR
                         _print_status_row_next
-                        _warn "Automatic CHMOD of '$scpath' failed." "$INDENT"                    
+                        _warn "Automatic CHMOD of '$scpath' failed." "$INDENT"
                         continue
                     fi
                 else
-                    _print_status_row $scname $STATUS_ERROR 
+                    _print_status_row $scname $STATUS_ERROR
                     _print_status_row_next
                     _warn "Cannot automatically chmod '$scpath' because the file is owned by $scuser; you are $CURR_USER. Skipping..." "$INDENT"
                     continue
                 fi
             fi
         fi
-        
+
         _command $scname "./$(basename $scname)" $scdir
 
     done <<< "$(cd $DOTROOT; find . -type f | grep .*\.dotsh$;)"
@@ -219,10 +219,9 @@ _git_check_local() {
         return 1
     fi
 
-    
     if _git_check_dirty; then
         _error "Local repository has uncommitted changes."
-        
+
         echo -en "Stash local changes (y/N)? "
         read -n1 inst_stash
         echo
@@ -258,7 +257,7 @@ _git_check_remote() {
 
     _debug "Remote: $git_remote"
     _debug " Local: $( cd $DOTROOT; git rev-parse HEAD)"
-    
+
     if [[ $( cd $DOTROOT; git rev-parse HEAD) == $git_remote ]]; then
         _info "No updates necessary. You have the latest from $git_remote_branch." "$INDENT"
         return 0
@@ -370,7 +369,7 @@ _dotdotdot_sync
 
 sleep 1
 move_to_repo="N"
-if [[ $_git_run == 0 ]]; then    
+if [[ $_git_run == 0 ]]; then
     if _git_check_dirty; then
         _warn "After running the scripts, you have uncommitted changes."
         echo -en "Do you want to examine these changes (y/N)?"
