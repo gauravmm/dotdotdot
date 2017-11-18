@@ -82,7 +82,7 @@ INDENT_PREFIX="   ║║ "
 
 STD_PREFIX="$COLOR_ERROR$INDENT_PREFIX$COLOR_NULL"
 
-SCREEN_WIDTH=$(tput cols 2>/dev/null || stty size | cut \d\  -f2)
+SCREEN_WIDTH=$(tput cols 2>/dev/null || stty size | cut -d\  -f2)
 _print_status_row_overwrite() { echo -ne "\r"; }
 _print_status_row() {
     # 10 columns for the "[STATUS] "
