@@ -20,5 +20,6 @@
     "python.linting.enabled": false,
     "window.menuBarVisibility": "toggle",
     "workbench.activityBar.visible": false,
-    "files.autoSave": "afterDelay"
+    "files.autoSave": "afterDelay",
+    "python.linting.enabledWithoutWorkspace": false
 }
