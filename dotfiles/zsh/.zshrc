@@ -85,5 +85,5 @@ export PATH=$PATH:~/.dotdotdot/bin:~/scripts
 
 # if gem exists, include it in the path
 if [[ -d ~/.gem/ruby/2.5.0/bin ]]; then
-	export PATH=$PATH:~/.gem/ruby/2.5.0/bin
+	export PATH=~/.gem/ruby/2.5.0/bin:$PATH
 fi
