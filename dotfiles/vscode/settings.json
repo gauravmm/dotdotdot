@@ -21,5 +21,6 @@
     "window.menuBarVisibility": "toggle",
     "workbench.activityBar.visible": false,
     "files.autoSave": "off",
-    "python.linting.enabledWithoutWorkspace": false
+    "python.linting.enabledWithoutWorkspace": false,
+    "git.autofetch": true
 }
