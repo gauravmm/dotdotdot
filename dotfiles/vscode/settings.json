@@ -22,5 +22,6 @@
     "workbench.activityBar.visible": false,
     "files.autoSave": "off",
     "python.linting.enabledWithoutWorkspace": false,
-    "git.autofetch": true
+    "git.autofetch": true,
+    "latex-workshop.view.pdf.viewer": "browser"
 }
