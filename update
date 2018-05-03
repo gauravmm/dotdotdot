@@ -27,7 +27,7 @@ t_prev="$(cat .updated 2>/dev/null)"
 t_curr="$(date '+%s')"
 if [[ ! -z "${t_prev}" ]]; then
     t_diff=$(($t_curr - $t_prev))
-    if [[ $t_diff -lt 36000 ]]; then
+    if [[ $t_diff -lt 259200 ]]; then
         exit_unlock 0   
     fi
 fi
