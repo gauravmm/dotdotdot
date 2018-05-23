@@ -5,13 +5,13 @@ echo $rv
 
 case $rv in
    "PC screen only")
-      (xrandr --output eDP1 --mode 1920x1080 --output HDMI1 --off) &
+      (xrandr --output eDP-1 --auto --output HDMI-1 --off) &
       ;;
    "Extend")
-      (xrandr --output eDP1 --mode 1920x1080 --output HDMI1 --auto --left-of eDP1) &
+      (xrandr --output eDP-1 --auto --output HDMI-1 --auto --left-of eDP-1) &
       ;;
    "Second screen only")
-      (xrandr --output eDP1 --off --output HDMI1 --auto --left-of eDP1) &
+      (xrandr --output eDP-1 --off --output HDMI-1 --auto --left-of eDP-1) &
       ;;
 esac
 
