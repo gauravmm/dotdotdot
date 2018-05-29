@@ -87,3 +87,7 @@ export PATH=$PATH:~/.dotdotdot/bin:~/scripts
 if [[ -d ~/.gem/ruby/2.5.0/bin ]]; then
 	export PATH=~/.gem/ruby/2.5.0/bin:$PATH
 fi
+
+if [[ -d /data/scripts ]]; then
+        export PATH=/data/scripts:$PATH
+fi
