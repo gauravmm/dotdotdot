@@ -88,9 +88,14 @@ if [[ -d ~/.gem/ruby/2.5.0/bin ]]; then
 	export PATH=~/.gem/ruby/2.5.0/bin:$PATH
 fi
 
+# Gurobi
 if [[ -d /opt/gurobi800 ]]; then
         export GUROBI_HOME=/opt/gurobi800/
         export PATH=$GUROBI_HOME/bin/:$PATH
         export LD_LIBRARY_PATH=$GUROBI_HOME/lib:$LD_LIBRARY_PATH
 fi
 
+# Scripts directory
+if [[ -d /data/scripts ]]; then
+        export PATH=/data/scripts:$PATH
+fi
