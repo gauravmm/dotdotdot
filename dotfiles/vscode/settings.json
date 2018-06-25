@@ -1,11 +1,12 @@
 {
-    "window.zoomLevel": 2,
+    "window.zoomLevel": 4,
     "editor.fontFamily": "'Fira Code', 'Inconsolata', 'Droid Sans Mono', 'Courier New', monospace, 'Droid Sans Fallback'",
     "editor.fontLigatures": true,
     "terminal.integrated.fontLigatures": true,
     "editor.disableMonospaceOptimizations": true,
     "files.associations": {
-        "*.dotsh": "shellscript"
+        "*.dotsh": "shellscript",
+        "*.j2": "shellscript"
     },
     "git.enableSmartCommit": true,
     "editor.renderWhitespace": "all",
