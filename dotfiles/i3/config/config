@@ -132,3 +132,6 @@ mode "resize" {
 }
 
 bindsym $mod+r mode "resize"
+
+# screenshots
+bindsym --release $mod+z exec scrot -s
