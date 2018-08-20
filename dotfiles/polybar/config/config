@@ -23,7 +23,6 @@ modules-left = xwindow
 modules-right = volume backlight wireless-network wired-network battery date powermenu
 
 [bar/bottom]
-monitor = eDP-1
 bottom = true
 width = 100%
 height = 27
