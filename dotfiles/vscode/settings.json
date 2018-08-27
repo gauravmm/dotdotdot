@@ -25,5 +25,6 @@
     "python.linting.enabledWithoutWorkspace": false,
     "git.autofetch": true,
     "latex-workshop.view.pdf.viewer": "browser",
-    "latex-workshop.message.update.show": false
+    "latex-workshop.message.update.show": false,
+    "terminal.integrated.rendererType": "dom"
 }
