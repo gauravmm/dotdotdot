@@ -135,4 +135,4 @@ bindsym $mod+r mode "resize"
 
 # screenshots
 bindsym --release Print exec "maim | xclip -selection clipboard -t image/png"
-bindsym --release Shift+Print exec "maim ~/screenshot.png"
+bindsym --release Shift+Print exec "maim ~/screenshots/s_$(date --iso-8601=seconds).png"
