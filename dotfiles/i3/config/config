@@ -134,4 +134,5 @@ mode "resize" {
 bindsym $mod+r mode "resize"
 
 # screenshots
-bindsym --release $mod+z exec scrot -s
+bindsym --release Print exec "maim | xclip -selection clipboard -t image/png"
+bindsym --release Shift+Print exec "maim ~/screenshot.png"
