@@ -8,6 +8,8 @@ mechatroner.rainbow-csv
 ms-mssql.mssql
 ms-python.python
 ms-vscode.cpptools
+njpwerner.autodocstring
+piotrpalarz.vscode-gitignore-generator
 rafaelmaiolla.remote-vscode
 rebornix.ruby
 saitofjp.workspace-color
