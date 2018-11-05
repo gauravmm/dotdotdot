@@ -1,5 +1,5 @@
 {
-    "window.zoomLevel": 5,
+    "window.zoomLevel": 4,
     "editor.fontFamily": "'Fira Code', 'Inconsolata', 'Droid Sans Mono', 'Courier New', monospace, 'Droid Sans Fallback'",
     "editor.fontLigatures": true,
     "terminal.integrated.fontLigatures": true,
@@ -30,5 +30,6 @@
     "terminal.integrated.rendererType": "dom",
     "search.exclude": {
         "/tmp/**": true
-    }
+    },
+    "explorer.confirmDelete": false
 }
