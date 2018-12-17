@@ -105,3 +105,11 @@ fi
 if [[ -d /data/scripts ]]; then
         export PATH=/data/scripts:$PATH
 fi
+
+#  PyEnv
+if [[ -d $HOME/.pyenv ]]; then 
+	export PYENV_ROOT="$HOME/.pyenv"
+	export PATH="$PYENV_ROOT/bin:$PATH"
+	eval "$(pyenv init -)"
+	eval "$(pyenv virtualenv-init -)"
+fi 
