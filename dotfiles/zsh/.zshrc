@@ -85,9 +85,9 @@ export PATH=$PATH:~/.dotdotdot/bin:~/scripts
 
 # Support SSH_AUTH_SOCK updating in tmux
 if [[ -S "$SSH_AUTH_SOCK" && ! -h "$SSH_AUTH_SOCK" ]]; then
-    ln -sf "$SSH_AUTH_SOCK" ~/.ssh/ssh_auth_sock;
+    ln -sf "$SSH_AUTH_SOCK" ~/.ssh/ssh_auth_sock.$HOST;
 fi
-export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock;
+export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock.$HOST;
 
 # if gem exists, include it in the path
 if [[ -d ~/.gem/ruby/2.5.0/bin ]]; then
