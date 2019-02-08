@@ -2,7 +2,7 @@
 
 [bar/top]
 monitor = ${env:POLYBAR_DISPLAY:}
-dpi = ${env:POLYBAR_DPI:96}
+dpi = ${env:POLYBAR_DPI:120}
 monitor-strict = true
 
 width = 100%
@@ -29,7 +29,7 @@ modules-right = volume backlight wireless-network wired-network battery date pow
 
 [bar/bottom]
 monitor = ${env:POLYBAR_DISPLAY:}
-dpi = ${env:POLYBAR_DPI:96}
+dpi = ${env:POLYBAR_DPI:120}
 monitor-strict = true
 
 bottom = true
@@ -103,6 +103,7 @@ index-sort = true
 format = <label-state> <label-mode>
 enable-scroll = true
 wrapping-scroll = true
+pin-workspaces = true
 
 label-dimmed-underline = ${BAR.background}
 
