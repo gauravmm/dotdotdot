@@ -2,8 +2,7 @@
 # http://i3wm.org/docs/userguide.html
 
 # Start compositor
-exec xrandr --dpi 120
-exec compton &
+exec compton --config ~/.config/i3/compton.conf -b &
 exec_always --no-startup-id ~/.config/polybar/launch.sh &
 exec --no-startup-id feh --randomize --bg-fill ~/Wallpapers/*
 
