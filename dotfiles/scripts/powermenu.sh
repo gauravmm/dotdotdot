@@ -1,6 +1,6 @@
 #!/bin/sh
 
-rv=$(echo -e "Cancel|Lock|Sleep|Log Off|Shutdown|Reboot" | rofi -dmenu -sep '|' -lines 5 -width 100 -padding 900 -mesg "Power" -u 3-4 -selected-row 2 -i -p "")
+rv=$(printf "Cancel|Lock|Sleep|Log Off|Shutdown|Reboot" | rofi -dmenu -sep '|' -lines 5 -width 100 -padding 900 -mesg "Power" -u 3-4 -selected-row 2 -i -p "")
 echo $rv
 
 case $rv in
