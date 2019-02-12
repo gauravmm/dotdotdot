@@ -114,3 +114,8 @@ if [[ $(hostname) != "loci" ]] && [[ -d $HOME/.pyenv ]]; then
   eval "$(pyenv init -)"
   eval "$(pyenv virtualenv-init -)"
 fi
+
+# TeXLive 2018
+if [[ -d /usr/local/texlive/2018/bin/x86_64-linux ]]; then
+  export PATH="$PATH:/usr/local/texlive/2018/bin/x86_64-linux"
+fi
