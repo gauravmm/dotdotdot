@@ -7,6 +7,7 @@ if ! which code; then
 fi
 
 CONFDIR=~/.config/Code/User
+JQ="./jq-linux64 --sort-keys"
 
 if [[ ! -d $CONFDIR ]]; then
     echo "Creating directory $CONFDIR"
@@ -14,8 +15,25 @@ if [[ ! -d $CONFDIR ]]; then
 fi
 
 # Settings
-rsync -rtuv settings.json $CONFDIR/settings.json
-rsync -rtuv $CONFDIR/settings.json settings.json
+
+IGNORE_KEYS='"window.zoomLevel", "terminal.integrated.rendererType"'
+CONFIG_JSON="$CONFDIR/settings.json"
+
+# If the machine config is newer than the stored config, store it locally.
+if [[ -f $CONFIG_JSON ]] && [[ $CONFIG_JSON -nt settings.json ]]; then
+    $JQ "with_entries(select(.key | IN($IGNORE_KEYS) | not))" $CONFIG_JSON > settings.json
+
+elif [[ ! -f $CONFIG_JSON ]] || [[ settings.json -nt $CONFIG_JSON ]]; then
+    TMPFILE_CURRSETTING=$(mktemp)
+    TMPFILE_NEWSETTING=$CONFDIR/.tmp.settings.json
+
+    # Copy the keys not to synchronize to a temporary file
+    $JQ "with_entries(select(.key | IN($IGNORE_KEYS)))" $CONFIG_JSON > $TMPFILE_CURRSETTING
+    # Merge that temp file with the updated settings
+    $JQ -s ".[0] * .[1]" $TMPFILE_CURRSETTING settings.json > $TMPFILE_NEWSETTING
+    # Overwrite the original settings
+    mv $TMPFILE_NEWSETTING $CONFIG_JSON
+fi
 
 # Keybindings
 rsync -rtuv keybindings.json $CONFDIR/keybindings.json

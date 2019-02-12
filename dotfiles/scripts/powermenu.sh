@@ -20,4 +20,3 @@ case $rv in
       sudo systemctl reboot
       ;;
 esac
-
