@@ -5,20 +5,19 @@ echo $rv
 
 case $rv in
    "Lock")
-      (sleep .5; i3lock-wrapper) &
+      ~/.scripts/lockscreen.sh
       ;;
    "Sleep")
-      (sleep .5; i3lock-wrapper) &
-      (sleep 2.5; sudo systemctl suspend) &
+      ~/.scripts/lockscreen.sh && sudo systemctl suspend
       ;;
    "Log Off")
-      exec i3-msg exit &
+      exec i3-msg exit
       ;;
    "Shutdown")
-      sudo poweroff &
+      sudo systemctl poweroff
       ;;
     "Reboot")
-      sudo reboot &
+      sudo systemctl reboot
       ;;
 esac
 
