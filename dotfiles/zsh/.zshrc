@@ -107,9 +107,10 @@ if [[ -d /data/scripts ]]; then
 fi
 
 #  PyEnv
-if [[ -d $HOME/.pyenv ]]; then 
-	export PYENV_ROOT="$HOME/.pyenv"
-	export PATH="$PYENV_ROOT/bin:$PATH"
-	eval "$(pyenv init -)"
-	eval "$(pyenv virtualenv-init -)"
+# When connected to loci, don't run pyenv so it doesn't regenerate the shims.
+if [[ $(hostname) != "loci" ]] && [[ -d $HOME/.pyenv ]]; then
+  export PYENV_ROOT="$HOME/.pyenv"
+  export PATH="$PYENV_ROOT/bin:$PATH"
+  eval "$(pyenv init -)"
+  eval "$(pyenv virtualenv-init -)"
 fi 
