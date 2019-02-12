@@ -272,7 +272,7 @@ ramp-volume-3 = 
 type = custom/text
 format-padding = 3
 content = 
-click-left = ~/scripts/powermenu.sh
+click-left = ~/.scripts/powermenu.sh
 
 [module/clock]
 type = internal/date

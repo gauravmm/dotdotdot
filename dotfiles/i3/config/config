@@ -4,7 +4,7 @@
 # Start compositor
 exec compton --config ~/.config/i3/compton.conf -b &
 exec_always --no-startup-id ~/.config/polybar/launch.sh &
-exec_always --no-startup-id ~/scripts/random_background.sh &
+exec_always --no-startup-id ~/.scripts/random_background.sh &
 
 set $mod Mod4
 
@@ -107,15 +107,15 @@ bindsym $mod+Shift+c reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
 # power menu
-bindsym $mod+Shift+l exec ~/scripts/powermenu.sh
+bindsym $mod+Shift+l exec ~/.scripts/powermenu.sh
 # xrandr
-bindsym $mod+p exec ~/scripts/extendscreen.sh
+bindsym $mod+p exec ~/.scripts/extendscreen.sh
 
 
 # Quick opener
-bindsym $mod+Shift+e exec ~/scripts/quickopen.sh
+bindsym $mod+Shift+e exec ~/.scripts/quickopen.sh
 # lock
-bindsym $mod+L exec ~/scripts/lockscreen.sh
+bindsym $mod+L exec ~/.scripts/lockscreen.sh
 
 # resize window (you can also use the mouse for that)
 mode "resize" {

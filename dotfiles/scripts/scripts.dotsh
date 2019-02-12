@@ -1,4 +1,9 @@
 #!/bin/bash
 
-mkdir -p ~/scripts
-rsync --exclude "*.dotsh" -rc "./" ~/scripts
+if ! [[ -d "$HOME/Desktop" ]]; then
+    echo "~/Desktop directory missing, so UI scripts are not needed."
+    exit 127
+fi
+
+mkdir -p ~/.scripts
+rsync --exclude "*.dotsh" -rc "./" ~/.scripts
