@@ -30,7 +30,7 @@ elif [[ ! -f $CONFIG_JSON ]] || [[ settings.json -nt $CONFIG_JSON ]]; then
     # Copy the keys not to synchronize to a temporary file
     $JQ "with_entries(select(.key | IN($IGNORE_KEYS)))" $CONFIG_JSON > $TMPFILE_CURRSETTING
     # Merge that temp file with the updated settings
-    $JQ ".[0] * .[1]" $TMPFILE_CURRSETTING settings.json > $TMPFILE_NEWSETTING
+    $JQ -s ".[0] * .[1]" $TMPFILE_CURRSETTING settings.json > $TMPFILE_NEWSETTING
     # Overwrite the original settings
     mv $TMPFILE_NEWSETTING $CONFIG_JSON
 fi

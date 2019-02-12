@@ -1,0 +1,35 @@
+{
+    "window.zoomLevel": 3,
+    "editor.fontFamily": "'Fira Code', 'Inconsolata', 'Droid Sans Mono', 'Courier New', monospace, 'Droid Sans Fallback'",
+    "editor.fontLigatures": true,
+    "terminal.integrated.fontLigatures": true,
+    "editor.disableMonospaceOptimizations": true,
+    "files.associations": {
+        "*.dotsh": "shellscript",
+        "*.j2": "shellscript",
+        "*.dis": "asm"
+    },
+    "git.enableSmartCommit": true,
+    "editor.renderWhitespace": "all",
+    "cSpell.enabledLanguageIds": [
+        "latex",
+        "markdown",
+        "plaintext",
+        "text",
+        "typescript",
+        "typescriptreact"
+    ],
+    "python.linting.enabled": false,
+    "window.menuBarVisibility": "toggle",
+    "workbench.activityBar.visible": false,
+    "files.autoSave": "off",
+    "python.linting.enabledWithoutWorkspace": false,
+    "git.autofetch": true,
+    "latex-workshop.view.pdf.viewer": "browser",
+    "latex-workshop.message.update.show": false,
+    "terminal.integrated.rendererType": "dom",
+    "search.exclude": {
+        "/tmp/**": true
+    },
+    "explorer.confirmDelete": false
+}
