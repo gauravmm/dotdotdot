@@ -15,4 +15,4 @@ if ! [[ $WALLPAPER_PATH = *.png ]]; then
     WALLPAPER_PATH=$NEW_WALLPAPER_PATH
 fi
 
-i3lock -di $WALLPAPER_PATH
+i3lock -i $WALLPAPER_PATH --color \#000000
