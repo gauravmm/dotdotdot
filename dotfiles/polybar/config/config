@@ -24,7 +24,7 @@ font-1 = unifont:size=11;0
 font-2 = MaterialIcons-Regular:size=12;0
 font-3 = FontAwesome:size=12;0
 
-modules-left = xwindow
+modules-left = hostname xwindow
 modules-right = volume backlight wireless-network wired-network battery date
 
 tray-detached = false
@@ -63,7 +63,7 @@ font-3 = MaterialIcons-Regular:size=11;0
 
 modules-left = i3
 modules-center =  mpd
-modules-right = cpu memory powermenu
+modules-right = cpu memory
 
 [module/xwindow]
 type = internal/xwindow
@@ -268,10 +268,12 @@ ramp-volume-1 = 
 ramp-volume-2 = 
 ramp-volume-3 = 
 
-[module/powermenu]
+[module/hostname]
 type = custom/text
-format-padding = 3
-content = 
+content = ${env:HOST}
+content-background = #000
+content-foreground = #fff
+content-padding = 4
 click-left = ~/.scripts/powermenu.sh
 
 [module/clock]
