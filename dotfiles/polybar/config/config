@@ -43,6 +43,8 @@ monitor-strict = true
 bottom = true
 width = 100%
 height = 27
+padding-left  = 2.5
+padding-right = 2.5
 
 background = ${bar/top.background}
 foreground = ${bar/top.foreground}
@@ -51,7 +53,6 @@ line-color = ${bar/top.background}
 line-size = 2
 
 spacing = 3
-padding-right = 4
 module-margin-left = 0
 module-margin-right = 6
 
