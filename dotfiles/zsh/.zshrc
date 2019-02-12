@@ -56,7 +56,7 @@ export SESSION_TYPE=$SESSION_TYPE
 # dotdotdot updater
 #
 if [[ -x ~/.dotdotdot/update ]]; then
-    ( ~/.dotdotdot/update )
+  ( ~/.dotdotdot/update )
 fi
 
 #
@@ -66,18 +66,18 @@ source "${HOME}/.zgen/zgen.zsh"
 
 # if the init scipt doesn't exist
 if ! zgen saved; then
-    echo "Generating new zgen file."
-    
-    # specify plugins here
-    zgen oh-my-zsh
-    zgen load zsh-users/zsh-syntax-highlighting
-    zgen oh-my-zsh plugins/git
-    zgen oh-my-zsh plugins/command-not-found
+  echo "Generating new zgen file."
 
-    zgen load gauravmm/zsh-theme themes/gmm-zsh
+  # specify plugins here
+  zgen oh-my-zsh
+  zgen load zsh-users/zsh-syntax-highlighting
+  zgen oh-my-zsh plugins/git
+  zgen oh-my-zsh plugins/command-not-found
 
-    # generate the init script from plugins above
-    zgen save
+  zgen load gauravmm/zsh-theme themes/gmm-zsh
+
+  # generate the init script from plugins above
+  zgen save
 fi
 
 # Add dotdotdot and scripts to PATH
@@ -85,25 +85,25 @@ export PATH=$PATH:~/.dotdotdot/bin:~/scripts
 
 # Support SSH_AUTH_SOCK updating in tmux
 if [[ -S "$SSH_AUTH_SOCK" && ! -h "$SSH_AUTH_SOCK" ]]; then
-    ln -sf "$SSH_AUTH_SOCK" ~/.ssh/ssh_auth_sock.$HOST;
+  ln -sf "$SSH_AUTH_SOCK" ~/.ssh/ssh_auth_sock.$HOST;
 fi
 export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock.$HOST;
 
 # if gem exists, include it in the path
 if [[ -d ~/.gem/ruby/2.5.0/bin ]]; then
-    export PATH=~/.gem/ruby/2.5.0/bin:$PATH
+  export PATH=~/.gem/ruby/2.5.0/bin:$PATH
 fi
 
 # Gurobi
 if [[ -d /opt/gurobi800 ]]; then
-        export GUROBI_HOME=/opt/gurobi800/linux64
-        export PATH=$GUROBI_HOME/bin/:$PATH
-        export LD_LIBRARY_PATH=$GUROBI_HOME/lib:$LD_LIBRARY_PATH
+  export GUROBI_HOME=/opt/gurobi800/linux64
+  export PATH=$GUROBI_HOME/bin/:$PATH
+  export LD_LIBRARY_PATH=$GUROBI_HOME/lib:$LD_LIBRARY_PATH
 fi
 
 # Scripts directory
 if [[ -d /data/scripts ]]; then
-        export PATH=/data/scripts:$PATH
+  export PATH=/data/scripts:$PATH
 fi
 
 #  PyEnv
@@ -113,4 +113,4 @@ if [[ $(hostname) != "loci" ]] && [[ -d $HOME/.pyenv ]]; then
   export PATH="$PYENV_ROOT/bin:$PATH"
   eval "$(pyenv init -)"
   eval "$(pyenv virtualenv-init -)"
-fi 
+fi
