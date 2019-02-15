@@ -100,7 +100,7 @@ _print_status_row() {
     # Produce string output
     case "$3" in
         "")
-            printf $DURATION_IMMEDIATE
+            printf "$DURATION_IMMEDIATE"
             ;;
         "0")
             printf "  .0s"
