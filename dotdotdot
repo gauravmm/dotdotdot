@@ -83,30 +83,40 @@ INDENT_PREFIX="   ║║ "
 STD_PREFIX="$COLOR_ERROR$INDENT_PREFIX$COLOR_NULL"
 
 SCREEN_WIDTH=$(tput cols 2>/dev/null || stty size | cut -d\  -f2)
-_print_status_row_overwrite() { echo -ne "\r"; }
+_print_status_row_overwrite() {
+    # Move cursor to start.
+    printf "\r"; 
+    # Clear all text on the line.
+    printf '\033[2K';
+}
 _print_status_row() {
+    # Prevent wrapping to the next line.
+    printf '\033[?7l'
+
     # 10 columns for the "[STATUS] "
     # 7 columns for the duration
-    cols_rem=$(( $SCREEN_WIDTH - ${#1} - 10 - 7 ))
-    echo -ne "${STATUS_COLOR[$2]}[${STATUS_TEXT[$2]}]$COLOR_NULL $COLOR_TIME"
+    printf "${STATUS_COLOR[$2]}[${STATUS_TEXT[$2]}]$COLOR_NULL $COLOR_TIME"
 
     # Produce string output
     case "$3" in
         "")
-            echo -ne $DURATION_IMMEDIATE
+            printf $DURATION_IMMEDIATE
             ;;
         "0")
-            echo -ne "  .0s"
+            printf "  .0s"
             ;;
         *)
             printf "%4ss" "$3"
             ;;
     esac
 
-    echo -ne "$COLOR_NULL $1"
-    head -c $cols_rem < /dev/zero | tr '\0' ' '
+    # Print content
+    printf "$COLOR_NULL $1"
 }
-_print_status_row_next() { echo; }
+_print_status_row_next() {
+    # Allow wrapping to next line, and then start next line
+    printf '\033[?7h\n'
+}
 
 COMMAND_VAL=""
 _command() {
@@ -142,12 +152,12 @@ _command() {
     else
         _print_status_row "$scname" $STATUS_ERROR $duration
         _print_status_row_next
-        echo "$COLOR_ERROR$INDENT_START$COLOR_NULL"
+        printf "$COLOR_ERROR$INDENT_START$COLOR_NULL\n"
         _error "failed with code $scexit" "$INDENT_PREFIX"
         cat "$scerrf" | sed -e "s/^/$STD_PREFIX/"
         _log_copy "$scoutf"
         _log_copy "$scerrf"
-        echo "$COLOR_ERROR$INDENT_END$COLOR_NULL"
+        printf "$COLOR_ERROR$INDENT_END$COLOR_NULL\n"
     fi
 
     COMMAND_VAL=$(cat $scoutf)
