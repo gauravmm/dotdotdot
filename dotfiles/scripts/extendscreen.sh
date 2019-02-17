@@ -1,6 +1,7 @@
 #!/bin/sh
 
 POLYBAR_RELAUNCH="$HOME/.config/polybar/launch.sh"
+WALLPAPER="$HOME/.wallpaper"
 
 if [ "$HOSTNAME" = "regretful-arch" ]; then
 	rv=$(printf "PC screen only|Extend|Second screen only" | rofi -dmenu -sep '|' -lines 3 -width 100 -padding 860 -mesg "Display" -u 3-4 -selected-row 1 -i -p "")
@@ -19,6 +20,13 @@ if [ "$HOSTNAME" = "regretful-arch" ]; then
 	esac
 
 	if [ -x "$POLYBAR_RELAUNCH" ]; then
-		"$POLYBAR_RELAUNCH"
+		("$POLYBAR_RELAUNCH" &)
+	fi
+
+	if [ -f $WALLPAPER ]; then
+		WALL=$(head -n1 $WALLPAPER | tr -s "\n")
+		if [ ! -z $WALL ]; then
+			feh --no-fehbg --bg-fill "$WALL"
+		fi
 	fi
 fi
