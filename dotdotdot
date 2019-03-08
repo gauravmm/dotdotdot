@@ -85,7 +85,7 @@ STD_PREFIX="$COLOR_ERROR$INDENT_PREFIX$COLOR_NULL"
 SCREEN_WIDTH=$(tput cols 2>/dev/null || stty size | cut -d\  -f2)
 _print_status_row_overwrite() {
     # Move cursor to start.
-    printf "\r"; 
+    printf "\r";
     # Clear all text on the line.
     printf '\033[2K';
 }

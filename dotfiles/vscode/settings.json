@@ -29,5 +29,6 @@
   },
   "terminal.integrated.fontLigatures": true,
   "window.menuBarVisibility": "toggle",
-  "workbench.activityBar.visible": false
+  "workbench.activityBar.visible": false,
+  "workbench.colorTheme": "Visual Studio Dark"
 }

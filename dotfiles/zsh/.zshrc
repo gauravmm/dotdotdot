@@ -94,9 +94,14 @@ if [[ -d ~/.gem/ruby/2.5.0/bin ]]; then
   export PATH=~/.gem/ruby/2.5.0/bin:$PATH
 fi
 
-# Gurobi
-if [[ -d /opt/gurobi800 ]]; then
+# Gurobi, prioritizing later versions:
+if [[ -d /opt/gurobi810 ]]; then
+  export GUROBI_HOME=/opt/gurobi810/linux64
+elif [[ -d /opt/gurobi800 ]]; then
   export GUROBI_HOME=/opt/gurobi800/linux64
+fi
+
+if [[ -v GUROBI_HOME ]]; then
   export PATH=$GUROBI_HOME/bin/:$PATH
   export LD_LIBRARY_PATH=$GUROBI_HOME/lib:$LD_LIBRARY_PATH
 fi

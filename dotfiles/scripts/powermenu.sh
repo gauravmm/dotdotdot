@@ -8,15 +8,15 @@ case $rv in
       ~/.scripts/lockscreen.sh
       ;;
    "Sleep")
-      ~/.scripts/lockscreen.sh && sudo systemctl suspend
+      ~/.scripts/lockscreen.sh && systemctl suspend
       ;;
    "Log Off")
       exec i3-msg exit
       ;;
    "Shutdown")
-      sudo systemctl poweroff
+      poweroff
       ;;
     "Reboot")
-      sudo systemctl reboot
+      reboot
       ;;
 esac
