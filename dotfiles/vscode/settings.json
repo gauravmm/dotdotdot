@@ -20,6 +20,7 @@
   "files.autoSave": "off",
   "git.autofetch": true,
   "git.enableSmartCommit": true,
+  "javascript.updateImportsOnFileMove.enabled": "always",
   "latex-workshop.message.update.show": false,
   "latex-workshop.view.pdf.viewer": "browser",
   "python.linting.enabled": false,
