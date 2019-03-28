@@ -121,6 +121,6 @@ if [[ $(hostname) != "loci" ]] && [[ -d $HOME/.pyenv ]]; then
 fi
 
 # TeXLive 2018
-if [[ -d /usr/local/texlive/2018/bin/x86_64-linux ]]; then
+if [[ -d "/usr/local/texlive/2018/bin/x86_64-linux" ]]; then
   export PATH="$PATH:/usr/local/texlive/2018/bin/x86_64-linux"
 fi

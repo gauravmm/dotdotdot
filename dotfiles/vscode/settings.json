@@ -30,6 +30,8 @@
   },
   "terminal.integrated.fontLigatures": true,
   "window.menuBarVisibility": "toggle",
+  "window.titleBarStyle": "custom",
   "workbench.activityBar.visible": false,
-  "workbench.colorTheme": "Visual Studio Dark"
+  "workbench.colorTheme": "Visual Studio Dark",
+  "workbench.startupEditor": "welcomePage"
 }
