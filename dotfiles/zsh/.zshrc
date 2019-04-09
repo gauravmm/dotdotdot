@@ -101,7 +101,7 @@ elif [[ -d /opt/gurobi800 ]]; then
   export GUROBI_HOME=/opt/gurobi800/linux64
 fi
 
-if [[ -v GUROBI_HOME ]]; then
+if (( ${+GUROBI_HOME} )); then
   export PATH=$GUROBI_HOME/bin/:$PATH
   export LD_LIBRARY_PATH=$GUROBI_HOME/lib:$LD_LIBRARY_PATH
 fi
