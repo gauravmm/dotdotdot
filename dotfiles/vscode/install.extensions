@@ -3,6 +3,7 @@ aeschli.vscode-css-formatter
 azemoh.one-monokai
 castwide.solargraph
 coolbear.systemd-unit-file
+DavidAnson.vscode-markdownlint
 eriklynd.json-tools
 GrapeCity.gc-excelviewer
 HookyQR.beautify
@@ -20,6 +21,5 @@ saitofjp.workspace-color
 SolarLiner.linux-themes
 Stephanvs.dot
 streetsidesoftware.code-spell-checker
-traBpUkciP.wolf
 vscoss.vscode-ansible
 wholroyd.jinja
