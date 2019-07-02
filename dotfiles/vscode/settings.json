@@ -23,6 +23,7 @@
   "javascript.updateImportsOnFileMove.enabled": "always",
   "latex-workshop.message.update.show": false,
   "latex-workshop.view.pdf.viewer": "browser",
+  "python.dataScience.sendSelectionToInteractiveWindow": true,
   "python.linting.enabled": false,
   "python.linting.enabledWithoutWorkspace": false,
   "search.exclude": {
