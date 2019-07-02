@@ -93,6 +93,10 @@ export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock.$HOST;
 if [[ -d ~/.gem/ruby/2.5.0/bin ]]; then
   export PATH=~/.gem/ruby/2.5.0/bin:$PATH
 fi
+if [[ -d ~/gems ]]; then
+  export GEM_HOME=~/gems
+  export PATH=~/gems/bin:$PATH
+fi
 
 # Gurobi, prioritizing later versions:
 if [[ -d /opt/gurobi810 ]]; then
@@ -124,3 +128,7 @@ fi
 if [[ -d "/usr/local/texlive/2018/bin/x86_64-linux" ]]; then
   export PATH="$PATH:/usr/local/texlive/2018/bin/x86_64-linux"
 fi
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
