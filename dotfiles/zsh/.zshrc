@@ -90,8 +90,8 @@ fi
 export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock.$HOST;
 
 # if gem exists, include it in the path
-if [[ -d ~/.gem/ruby/2.5.0/bin ]]; then
-  export PATH=~/.gem/ruby/2.5.0/bin:$PATH
+if [[ -d ~/.gem/ruby/2.6.0/bin ]]; then
+  export PATH=~/.gem/ruby/2.6.0/bin:$PATH
 fi
 if [[ -d ~/gems ]]; then
   export GEM_HOME=~/gems
