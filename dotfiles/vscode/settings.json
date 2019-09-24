@@ -15,6 +15,7 @@
   "editor.fontLigatures": true,
   "editor.renderWhitespace": "all",
   "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
   "files.associations": {
     "*.dis": "asm",
     "*.dotsh": "shellscript",
