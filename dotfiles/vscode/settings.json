@@ -25,6 +25,7 @@
   "git.autofetch": true,
   "git.enableSmartCommit": true,
   "javascript.updateImportsOnFileMove.enabled": "always",
+  "latex-workshop.latex.autoBuild.run": "never",
   "latex-workshop.message.update.show": false,
   "latex-workshop.view.pdf.viewer": "browser",
   "python.dataScience.allowImportFromNotebook": false,
