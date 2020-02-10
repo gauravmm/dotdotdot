@@ -131,6 +131,11 @@ elif [[ -d "/usr/local/texlive/2018/bin/x86_64-linux" ]]; then
   export PATH="$PATH:/usr/local/texlive/2018/bin/x86_64-linux"
 fi
 
+# Local Scripts
+if [[ -d "/home/gauravmm/.local/bin" ]]; then
+  export PATH="$PATH:/home/gauravmm/.local/bin"
+fi
+
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
