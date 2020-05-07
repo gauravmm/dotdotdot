@@ -26,10 +26,10 @@ elif [ $(hostname) = "ingvaeonic" ]; then
 
 	case $rv in
 		"Main only")
-			xrandr --output DP-0 --auto --output HDMI-0 --off
+			xrandr --output DP-2 --auto --output DP-0 --off
 			;;
 		"Both")
-			xrandr --output DP-0 --auto --output HDMI-0 --auto --right-of DP-0
+			xrandr --output DP-2 --auto --output DP-0 --auto --above DP-2
 			;;
 	esac
 
