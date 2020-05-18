@@ -46,6 +46,6 @@
   "window.menuBarVisibility": "toggle",
   "window.titleBarStyle": "custom",
   "workbench.activityBar.visible": false,
-  "workbench.colorTheme": "Visual Studio Dark",
+  "workbench.colorTheme": "Adapta Nokto",
   "workbench.startupEditor": "welcomePage"
 }
