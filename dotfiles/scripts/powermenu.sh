@@ -8,7 +8,7 @@ case $rv in
       ~/.scripts/lockscreen.sh
       ;;
    "Sleep")
-      ~/.scripts/lockscreen.sh && systemctl suspend
+      ~/.scripts/lockscreen.sh && sudo pm-suspend
       ;;
    "Log Off")
       exec i3-msg exit
