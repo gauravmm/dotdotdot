@@ -23,6 +23,10 @@ font pango:Fira Code 12
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
+# limit size of floating windows
+floating_minimum_size 200 x 200
+floating_maximum_size 2000 x 1380
+
 # start a terminal
 bindsym $mod+Return exec urxvt
 
