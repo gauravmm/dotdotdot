@@ -63,7 +63,7 @@ font-3 = MaterialIcons-Regular:size=11;0
 
 modules-left = i3
 modules-center =  mpd
-modules-right = cpu memory
+modules-right = gpu cpu memory
 
 [module/xwindow]
 type = internal/xwindow
@@ -150,6 +150,10 @@ label-empty-underline = #9b0a20
 label-empty-font = 1
 label-empty-padding = 4
 
+[module/gpu]
+type = custom/script
+exec = ~/.config/polybar/nvidia-gpu.sh
+interval = 10
 
 [module/cpu]
 type = internal/cpu
@@ -187,6 +191,7 @@ type = internal/date
 date = %%{F#99}%Y-%m-%d%%{F-}  %%{F#fff}%H:%M%%{F-}
 
 [module/memory]
+
 type = internal/memory
 format = <label> <bar-used>
 label = RAM
