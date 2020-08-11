@@ -1,13 +1,13 @@
 #!/bin/bash
 
-GPUDATA=$(nvidia-smi --query-gpu=index,utilization.gpu,utilization.memory,memory.used,memory.total,power.draw --format=csv,noheader,nounits | sort -n)
+GPUDATA=$(nvidia-smi --query-gpu=index,utilization.gpu,utilization.memory,memory.used,memory.total,power.draw --format=csv,noheader,nounits)
 NVIDIA_EXIT="$?"
 
 if [ "$NVIDIA_EXIT" -eq "127" ]; then
     echo "NO NVIDIA";
     exit
 else
-    if [ "$NVIDIA_EXIT" -ne "0" ]; then
+    if [ "$NVIDIA_EXIT" -ne 0 ]; then
         echo "NO GPU";
         exit
     fi
@@ -22,7 +22,9 @@ function print_ramp {
 }
 
 function print_ramp_percentage {
-    print_ramp $(( $1 * 8 / 100 ))
+    RAMP_INP="$1"
+    RAMP_PERCENT=$(( RAMP_INP * 8 / 100 ))
+    print_ramp "$RAMP_PERCENT"
 }
 
 # BAR
@@ -39,7 +41,7 @@ function print_bar {
     MAX=$2;
 
     # Which bar segment to pick:
-    BAR_SEG=$(( $VAL * $BAR_LEN / $MAX ));
+    BAR_SEG=$(( VAL * BAR_LEN / MAX ));
 
     IDX=0
     while [ $IDX -lt $BAR_SEG ]; do
