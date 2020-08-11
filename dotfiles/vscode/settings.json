@@ -25,7 +25,8 @@
   "files.associations": {
     "*.dis": "asm",
     "*.dotsh": "shellscript",
-    "*.j2": "shellscript"
+    "*.j2": "shellscript",
+    "*.yml": "ansible"
   },
   "files.autoSave": "afterDelay",
   "git.autofetch": true,
