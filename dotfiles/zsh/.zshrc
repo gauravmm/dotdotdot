@@ -142,6 +142,14 @@ elif [[ -d "/usr/local/texlive/2018/bin/x86_64-linux" ]]; then
   export PATH="$PATH:/usr/local/texlive/2018/bin/x86_64-linux"
 fi
 
+# Google Cloud SDK.
+GOOGLE_CLOUD_SDK_PATH="$HOME/google-cloud-sdk/";
+if [ -d "$GOOGLE_CLOUD_SDK_PATH" ]; then
+  export PATH="$PATH:$GOOGLE_CLOUD_SDK_PATH/bin";
+  . "$GOOGLE_CLOUD_SDK_PATH/path.zsh.inc";
+  . "$GOOGLE_CLOUD_SDK_PATH/completion.zsh.inc";
+fi
+
 # Local Scripts
 if [[ -d "/home/gauravmm/.local/bin" ]]; then
   export PATH="$PATH:/home/gauravmm/.local/bin"
