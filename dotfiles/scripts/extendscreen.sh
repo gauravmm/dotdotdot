@@ -21,7 +21,7 @@ if [ "$HOSTNAME" = "regretful-arch" ]; then
 	esac
 
 elif [ $(hostname) = "ingvaeonic" ]; then
-	rv=$(printf "Main only|Both|Secondary only" | rofi -dmenu -sep '|' -lines 3 -width 100 -padding 860 -mesg "Display" -u 3-4 -selected-row 1 -i -p "")
+	rv=$(printf "Main only|Both" | rofi -dmenu -sep '|' -lines 3 -width 100 -padding 860 -mesg "Display" -u 3-4 -selected-row 1 -i -p "")
 	echo $rv
 
 	case $rv in
@@ -30,9 +30,6 @@ elif [ $(hostname) = "ingvaeonic" ]; then
 			;;
 		"Both")
 			xrandr --output DP-2 --auto --output DP-0 --auto --above DP-2
-			;;
-		"Secondary only")
-			xrandr --output DP-2 --off --output DP-0 --auto
 			;;
 	esac
 
