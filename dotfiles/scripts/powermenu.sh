@@ -7,6 +7,10 @@ case $rv in
    "Lock")
       ~/.scripts/lockscreen.sh
       ;;
+   "Blank")
+       ~/.scripts/lockscreen.sh
+      sleep 1; xset dpms force off
+      ;;
    "Sleep")
       ~/.scripts/lockscreen.sh && sudo pm-suspend
       ;;
