@@ -40,6 +40,7 @@
   "latex-workshop.latex.autoBuild.run": "never",
   "latex-workshop.message.update.show": false,
   "latex-workshop.view.pdf.viewer": "browser",
+  "python.languageServer": "Pylance",
   "python.linting.enabled": false,
   "python.linting.enabledWithoutWorkspace": false,
   "search.exclude": {
