@@ -29,7 +29,9 @@ elif [ $(hostname) = "ingvaeonic" ]; then
 			xrandr --output DP-2 --auto --output DP-0 --off
 			;;
 		"Both")
-			xrandr --output DP-2 --auto --output DP-0 --auto --above DP-2
+			xrandr \
+				--output DP-0 --auto --panning 3840x2160+0+0 \
+				--output DP-2 --auto --panning 3440x1440+200+2160
 			;;
 		"Secondary only")
 			xrandr --output DP-2 --off --output DP-0 --auto

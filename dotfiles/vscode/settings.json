@@ -46,6 +46,9 @@
   "search.exclude": {
     "/tmp/**": true
   },
+  "terminal.integrated.commandsToSkipShell": [
+    "language-julia.interrupt"
+  ],
   "terminal.integrated.fontLigatures": true,
   "window.menuBarVisibility": "toggle",
   "window.titleBarStyle": "custom",
