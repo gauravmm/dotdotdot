@@ -172,3 +172,8 @@ fi
 if [[ -f "/usr/lib/x86_64-linux-gnu/libgtk3-nocsd.so.0" ]]; then
   export LD_PRELOAD="/usr/lib/x86_64-linux-gnu/libgtk3-nocsd.so.0:${LD_PRELOAD}"
 fi
+
+if [[ -f "$HOME/.rvm/scripts/rvm" ]]; then
+  export PATH="$PATH:$HOME/.rvm/bin"
+  source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+fi

@@ -19,5 +19,6 @@
         "key": "alt+shift+l",
         "command": "editor.action.transformToLowercase",
         "when": "editorTextFocus && !editorReadonly"
-    }
+    },
+    { "key": "ctrl+shift+e",          "command": "workbench.view.explorer" },
 ]
