@@ -119,6 +119,10 @@ if (( ${+GUROBI_HOME} )); then
   export LD_LIBRARY_PATH=$GUROBI_HOME/lib:$LD_LIBRARY_PATH
 fi
 
+if [[ -d "${HOME}/.mujoco/mujoco200/bin" ]]; then
+  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.mujoco/mujoco200/bin"
+fi
+
 # Scripts directory
 if [[ -d /data/scripts ]]; then
   export PATH=/data/scripts:$PATH
@@ -126,9 +130,10 @@ fi
 
 #  PyEnv
 # When connected to loci, don't run pyenv so it doesn't regenerate the shims.
-if [[ $(hostname) != "loci" ]] && [[ -d $HOME/.pyenv ]]; then
+if [[ -d "$HOME/.pyenv" ]]; then
   export PYENV_ROOT="$HOME/.pyenv"
   export PATH="$PYENV_ROOT/bin:$PATH"
+  eval "$(pyenv init --path)"
   eval "$(pyenv init -)"
   eval "$(pyenv virtualenv-init -)"
 fi
