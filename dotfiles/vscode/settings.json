@@ -49,6 +49,7 @@
   "terminal.integrated.commandsToSkipShell": [
     "language-julia.interrupt"
   ],
+  "terminal.integrated.fontFamily": "MesloLGS NF",
   "terminal.integrated.fontLigatures": true,
   "window.menuBarVisibility": "toggle",
   "window.titleBarStyle": "custom",
