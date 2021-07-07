@@ -125,8 +125,7 @@ if [[ -d /data/scripts ]]; then
 fi
 
 #  PyEnv
-# When connected to loci, don't run pyenv so it doesn't regenerate the shims.
-if [[ $(hostname) != "loci" ]] && [[ -d $HOME/.pyenv ]]; then
+if [[ -d $HOME/.pyenv ]]; then
   export PYENV_ROOT="$HOME/.pyenv"
   export PATH="$PYENV_ROOT/bin:$PATH"
   eval "$(pyenv init -)"
