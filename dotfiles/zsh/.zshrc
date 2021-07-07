@@ -119,15 +119,21 @@ if (( ${+GUROBI_HOME} )); then
   export LD_LIBRARY_PATH=$GUROBI_HOME/lib:$LD_LIBRARY_PATH
 fi
 
+if [[ -d "${HOME}/.mujoco/mujoco200/bin" ]]; then
+  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.mujoco/mujoco200/bin"
+fi
+
 # Scripts directory
 if [[ -d /data/scripts ]]; then
   export PATH=/data/scripts:$PATH
 fi
 
 #  PyEnv
-if [[ -d $HOME/.pyenv ]]; then
+# When connected to loci, don't run pyenv so it doesn't regenerate the shims.
+if [[ -d "$HOME/.pyenv" ]]; then
   export PYENV_ROOT="$HOME/.pyenv"
   export PATH="$PYENV_ROOT/bin:$PATH"
+  eval "$(pyenv init --path)"
   eval "$(pyenv init -)"
   eval "$(pyenv virtualenv-init -)"
 fi
@@ -170,4 +176,9 @@ fi
 # Some snap error:
 if [[ -f "/usr/lib/x86_64-linux-gnu/libgtk3-nocsd.so.0" ]]; then
   export LD_PRELOAD="/usr/lib/x86_64-linux-gnu/libgtk3-nocsd.so.0:${LD_PRELOAD}"
+fi
+
+if [[ -f "$HOME/.rvm/scripts/rvm" ]]; then
+  export PATH="$PATH:$HOME/.rvm/bin"
+  source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 fi
