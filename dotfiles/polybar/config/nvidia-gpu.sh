@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if ! which nvidia-smi ; then
+    echo "NO GPU";
+    exit
+fi
+
 GPUDATA=$(nvidia-smi --query-gpu=index,utilization.gpu,utilization.memory,memory.used,memory.total,power.draw --format=csv,noheader,nounits)
 NVIDIA_EXIT="$?"
 
