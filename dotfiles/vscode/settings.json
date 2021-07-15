@@ -35,6 +35,7 @@
   "julia.enableCrashReporter": true,
   "julia.enableTelemetry": true,
   "jupyter.allowImportFromNotebook": false,
+  "jupyter.alwaysTrustNotebooks": true,
   "jupyter.sendSelectionToInteractiveWindow": true,
   "jupyter.useNotebookEditor": false,
   "latex-workshop.latex.autoBuild.run": "never",
