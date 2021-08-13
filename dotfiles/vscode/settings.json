@@ -55,11 +55,8 @@
   "window.titleBarStyle": "custom",
   "workbench.activityBar.visible": false,
   "workbench.colorTheme": "Adapta Nokto",
-  "workbench.editorAssociations": [
-    {
-      "filenamePattern": "*.ipynb",
-      "viewType": "jupyter.notebook.ipynb"
-    }
-  ],
+  "workbench.editorAssociations": {
+    "*.ipynb": "jupyter.notebook.ipynb"
+  },
   "workbench.startupEditor": "welcomePage"
 }
