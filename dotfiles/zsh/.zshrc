@@ -123,6 +123,14 @@ if [[ -d "${HOME}/.mujoco/mujoco200/bin" ]]; then
   export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.mujoco/mujoco200/bin"
 fi
 
+if [[ -d "${HOME}/.local/bin" ]]; then
+  export PATH="$PATH:$HOME/.local/bin"
+fi
+
+if [[ -d "${HOME}/.mujoco/mjpro150/bin" ]]; then
+  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.mujoco/mjpro150/bin"
+fi
+
 # Scripts directory
 if [[ -d /data/scripts ]]; then
   export PATH=/data/scripts:$PATH

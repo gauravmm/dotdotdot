@@ -16,6 +16,23 @@
     "typescript",
     "typescriptreact"
   ],
+  "cSpell.userWords": [
+    "actor",
+    "agent",
+    "buffer",
+    "cfg",
+    "device",
+    "direct",
+    "dynamics",
+    "imagined",
+    "length",
+    "logger",
+    "model",
+    "profile",
+    "rng",
+    "rollout",
+    "unroll"
+  ],
   "editor.disableMonospaceOptimizations": true,
   "editor.fontFamily": "'Fira Code', 'Inconsolata', 'Droid Sans Mono', 'Courier New', monospace, 'Droid Sans Fallback'",
   "editor.fontLigatures": true,
@@ -35,6 +52,7 @@
   "julia.enableCrashReporter": true,
   "julia.enableTelemetry": true,
   "jupyter.allowImportFromNotebook": false,
+  "jupyter.alwaysTrustNotebooks": true,
   "jupyter.sendSelectionToInteractiveWindow": true,
   "jupyter.useNotebookEditor": false,
   "latex-workshop.latex.autoBuild.run": "never",
@@ -46,6 +64,7 @@
   "search.exclude": {
     "/tmp/**": true
   },
+  "security.workspace.trust.untrustedFiles": "open",
   "terminal.integrated.commandsToSkipShell": [
     "language-julia.interrupt"
   ],
