@@ -140,3 +140,13 @@ bindsym $mod+r mode "resize"
 bindsym --release Print exec "maim | xclip -selection clipboard -t image/png"
 bindsym --release Shift+Print exec "maim ~/screenshots/s_$(date --iso-8601=seconds).png"
 bindsym --release $mod+Print exec "maim -i $(xdotool getactivewindow) ~/screenshots/s_$(date --iso-8601=seconds).png"
+
+# brightness
+bindsym --release XF86MonBrightnessDown exec "xbacklight -dec 10"
+bindsym --release XF86MonBrightnessUp exec "xbacklight -inc 10"
+
+# brightness
+bindsym --release XF86AudioMute exec "amixer -q sset Master toggle"
+bindsym --release XF86AudioLowerVolume exec "amixer -q sset Master 3%-"
+bindsym --release XF86AudioRaiseVolume exec "amixer -q sset Master 3%+"
+
