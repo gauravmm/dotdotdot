@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if ! which nvidia-smi ; then
+if ! which nvidia-smi > /dev/null ; then
     echo "NO GPU";
     exit
 fi
