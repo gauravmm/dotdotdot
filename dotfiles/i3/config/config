@@ -13,7 +13,7 @@ new_window pixel 1
 # Hide borders if there is only one window
 hide_edge_borders smart
 # Gaps
-gaps inner 5
+# gaps inner 5
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
