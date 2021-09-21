@@ -36,7 +36,6 @@ function print_ramp_percentage {
 BAR_LEN=12
 BAR_COLOR=(aaff77 aaff77 aaff77 aaff77 aaff77 aaff77 fba922  fba922  fba922 fba922 ff5555 ff5555)
 BAR_EMPTY="444444"
-BAR_INDICATOR="ffffff"
 BAR_INDICATOR_GLYPH="|"
 BAR_USED_GLYPH="─"
 BAR_EMPTY_GLYPH="─"
@@ -54,7 +53,7 @@ function print_bar {
         IDX=$(($IDX + 1))
     done
 
-    printf "%%{F#${BAR_INDICATOR_FG}}${BAR_INDICATOR_GLYPH}";
+    printf "${BAR_INDICATOR_GLYPH}";
 
     printf "%%{F#${BAR_EMPTY}}";
     while [ $IDX -lt $BAR_LEN ]; do
