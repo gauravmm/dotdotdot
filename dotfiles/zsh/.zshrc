@@ -190,3 +190,11 @@ if [[ -f "$HOME/.rvm/scripts/rvm" ]]; then
   export PATH="$PATH:$HOME/.rvm/bin"
   source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 fi
+
+#
+# Remote machines.
+#
+
+if [[ "$(hostname)" == "locus.cs.cmu.edu" ]]; then
+  module add tmux-2.9a
+fi
