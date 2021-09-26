@@ -24,6 +24,8 @@ ms-python.vscode-pylance
 ms-toolsai.jupyter
 ms-vscode.cpptools
 ms-vscode-remote.remote-containers
+ms-vscode-remote.remote-ssh
+ms-vscode-remote.remote-ssh-edit
 nhoizey.gremlins
 njpwerner.autodocstring
 piotrpalarz.vscode-gitignore-generator
