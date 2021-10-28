@@ -136,15 +136,9 @@ if [[ -d /data/scripts ]]; then
   export PATH=/data/scripts:$PATH
 fi
 
-#  PyEnv
-# When connected to loci, don't run pyenv so it doesn't regenerate the shims.
-if [[ -d "$HOME/.pyenv" ]]; then
-  export PYENV_ROOT="$HOME/.pyenv"
-  export PATH="$PYENV_ROOT/bin:$PATH"
-  eval "$(pyenv init --path)"
-  eval "$(pyenv init -)"
-  eval "$(pyenv virtualenv-init -)"
-fi
+# PyEnv
+# Adopt new behaviour to disable the annoying notice:
+export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 
 # TeXLive 2018
 if [[ -d "/usr/local/texlive/2019/bin/x86_64-linux" ]]; then
