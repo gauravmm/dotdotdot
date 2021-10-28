@@ -64,6 +64,14 @@
   "latex-workshop.latex.autoBuild.run": "never",
   "latex-workshop.message.update.show": false,
   "latex-workshop.view.pdf.viewer": "browser",
+  "mssql.connections": [
+    {
+      "database": "{{put-database-name-here}}",
+      "password": "{{put-password-here}}",
+      "server": "{{put-server-name-here}}",
+      "user": "{{put-username-here}}"
+    }
+  ],
   "python.languageServer": "Pylance",
   "python.linting.enabled": false,
   "python.linting.enabledWithoutWorkspace": false,
