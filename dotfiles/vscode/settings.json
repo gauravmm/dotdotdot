@@ -59,6 +59,7 @@
   "julia.symbolCacheDownload": true,
   "jupyter.allowImportFromNotebook": false,
   "jupyter.alwaysTrustNotebooks": true,
+  "jupyter.askForKernelRestart": false,
   "jupyter.sendSelectionToInteractiveWindow": true,
   "jupyter.useNotebookEditor": false,
   "latex-workshop.latex.autoBuild.run": "never",
