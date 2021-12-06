@@ -110,8 +110,8 @@ if [[ -d ~/gems ]]; then
 fi
 
 # Gurobi, prioritizing later versions:
-if [[ -d /opt/gurobi912 ]]; then
-  export GUROBI_HOME=/opt/gurobi912/linux64
+if [[ -d /opt/gurobi950 ]]; then
+  export GUROBI_HOME=/opt/gurobi950/linux64
 fi
 
 if (( ${+GUROBI_HOME} )); then
