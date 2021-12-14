@@ -4,7 +4,7 @@ set -x
 POLYBAR_RELAUNCH="$HOME/.config/polybar/launch.sh"
 WALLPAPER="$HOME/.wallpaper"
 
-if [ "$HOSTNAME" = "anartes" ]; then
+if [ $(hostname) = "anartes" ]; then
 	rv=$(printf "PC screen only|Extend|Second screen only" | rofi -dmenu -sep '|' -lines 3 -width 100 -padding 860 -mesg "Display" -u 3-4 -selected-row 1 -i -p "")
 	echo $rv
 
