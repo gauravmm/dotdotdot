@@ -3,7 +3,7 @@ Bi-directional configuration-as-code. Deploy the same configuration on multiple 
 
 ## Quick installation
 
-On Ubuntu, yhe only prerequisites are `git` and `bash`. On Arch, you also need `rsync`, `bc`, `wget`.
+On Ubuntu, the only prerequisites are `git` and `bash`. On Arch, you also need `rsync`, `bc`, `wget`.
 
 ```
 wget -qO - https://raw.githubusercontent.com/gauravmm/dotdotdot/master/install | bash
