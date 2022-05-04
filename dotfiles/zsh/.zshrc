@@ -144,11 +144,9 @@ eval "$(pyenv init -)"
 # Adopt new behaviour to disable the annoying notice:
 export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 
-# TeXLive 2018
-if [[ -d "/usr/local/texlive/2019/bin/x86_64-linux" ]]; then
-  export PATH="$PATH:/usr/local/texlive/2019/bin/x86_64-linux"
-elif [[ -d "/usr/local/texlive/2018/bin/x86_64-linux" ]]; then
-  export PATH="$PATH:/usr/local/texlive/2018/bin/x86_64-linux"
+# TeXLive
+if [[ -d "/usr/local/texlive/2022/bin/x86_64-linux" ]]; then
+  export PATH="$PATH:/usr/local/texlive/2022/bin/x86_64-linux"
 fi
 
 # Google Cloud SDK.
