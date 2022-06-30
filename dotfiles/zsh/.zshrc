@@ -80,6 +80,7 @@ if ! zgen saved; then
   zgen load zsh-users/zsh-syntax-highlighting
   zgen oh-my-zsh plugins/git
   zgen oh-my-zsh plugins/command-not-found
+  # zgen load MichaelAquilina/zsh-autoswitch-virtualenv
 
   #zgen load gauravmm/zsh-theme themes/gmm-zsh
   zgen load romkatv/powerlevel10k powerlevel10k
@@ -110,8 +111,8 @@ if [[ -d ~/gems ]]; then
 fi
 
 # Gurobi, prioritizing later versions:
-if [[ -d /opt/gurobi950 ]]; then
-  export GUROBI_HOME=/opt/gurobi950/linux64
+if [[ -d /opt/gurobi951 ]]; then
+  export GUROBI_HOME=/opt/gurobi951/linux64
 fi
 
 if (( ${+GUROBI_HOME} )); then
