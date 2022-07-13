@@ -120,16 +120,12 @@ if (( ${+GUROBI_HOME} )); then
   export LD_LIBRARY_PATH=$GUROBI_HOME/lib:$LD_LIBRARY_PATH
 fi
 
-if [[ -d "${HOME}/.mujoco/mujoco200/bin" ]]; then
-  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.mujoco/mujoco200/bin"
+if [[ -d "${HOME}/.mujoco/mujoco210/bin" ]]; then
+  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.mujoco/mujoco210/bin"
 fi
 
 if [[ -d "${HOME}/.local/bin" ]]; then
   export PATH="$PATH:$HOME/.local/bin"
-fi
-
-if [[ -d "${HOME}/.mujoco/mjpro150/bin" ]]; then
-  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.mujoco/mjpro150/bin"
 fi
 
 # Scripts directory
