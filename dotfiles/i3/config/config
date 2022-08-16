@@ -5,6 +5,8 @@
 exec compton --config ~/.config/i3/compton.conf -b &
 exec_always --no-startup-id ~/.config/polybar/launch.sh &
 exec_always --no-startup-id ~/.scripts/random_background.sh &
+exec_always --no-startup-id ~/software/connmap/connmap.exe &
+exec nm-applet &
 
 set $mod Mod4
 
