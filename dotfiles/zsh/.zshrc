@@ -126,6 +126,10 @@ if [[ -d "${HOME}/.mujoco/mujoco210/bin" ]]; then
   export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.mujoco/mujoco210/bin"
 fi
 
+if [[ -d "/usr/lib/nvidia" ]]; then
+  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/lib/nvidia"
+fi
+
 if [[ -d "${HOME}/.local/bin" ]]; then
   export PATH="$PATH:$HOME/.local/bin"
 fi
