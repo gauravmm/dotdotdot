@@ -140,12 +140,14 @@ if [[ -d /data/scripts ]]; then
 fi
 
 # PyEnv
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init --path)"
-eval "$(pyenv init -)"
-# Adopt new behaviour to disable the annoying notice:
-export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+if [[ -d "$HOME/.pyenv" ]]; then
+  export PYENV_ROOT="$HOME/.pyenv"
+  export PATH="$PYENV_ROOT/bin:$PATH"
+  eval "$(pyenv init --path)"
+  eval "$(pyenv init -)"
+  # Adopt new behaviour to disable the annoying notice:
+  export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+fi
 
 # TeXLive
 if [[ -d "/usr/local/texlive/2023/bin/x86_64-linux" ]]; then
@@ -181,8 +183,8 @@ if [[ -d "$HOME/software/gradle-7.4.2/bin" ]]; then
 fi
 
 # Some snap error:
-if [[ -f "/usr/lib/x86_64-linux-gnu/libgtk3-nocsd.so.0" ]]; then
-  export LD_PRELOAD="/usr/lib/x86_64-linux-gnu/libgtk3-nocsd.so.0:${LD_PRELOAD}"
+if [[ -d "/snap/bin" ]]; then
+  export PATH="/snap/bin:${PATH}"
 fi
 
 if [[ -f "$HOME/.rvm/scripts/rvm" ]]; then
