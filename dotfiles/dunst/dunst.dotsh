@@ -1,13 +1,10 @@
 #!/bin/bash
 set -e
 
-# ZGEN
 DUNSTDIR=~/.config/dunst
 
-if [ ! -d "$DUNSTDIR" ]; then
-	mkdir "$DUNSTDIR"
+if [[ -d "$DUNSTDIR" ]]; then
+	# dunstrc
+	rsync -rtuv dunstrc "$DUNSTDIR/dunstrc"
+	rsync -rtuv "$DUNSTDIR/dunstrc" dunstrc
 fi
-
-# dunstrc
-rsync -rtuv dunstrc "$DUNSTDIR/dunstrc"
-rsync -rtuv "$DUNSTDIR/dunstrc" dunstrc
