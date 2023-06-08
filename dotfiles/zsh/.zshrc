@@ -148,8 +148,8 @@ eval "$(pyenv init -)"
 export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 
 # TeXLive
-if [[ -d "/usr/local/texlive/2022/bin/x86_64-linux" ]]; then
-  export PATH="$PATH:/usr/local/texlive/2022/bin/x86_64-linux"
+if [[ -d "/usr/local/texlive/2023/bin/x86_64-linux" ]]; then
+  export PATH="$PATH:/usr/local/texlive/2023/bin/x86_64-linux"
 fi
 
 # Google Cloud SDK.
