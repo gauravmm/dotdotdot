@@ -16,6 +16,7 @@ bindkey -e
 
 # Language setting
 LANG=en_US.UTF-8
+LC_ALL=en_US.UTF-8
 
 #
 # Additional key bindings
