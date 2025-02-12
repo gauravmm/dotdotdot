@@ -1,10 +1,16 @@
 #!/bin/bash
 set -e
 
+if ! which dunst; then
+    echo "Dunst is not installed."
+    exit 127
+fi
+
 DUNSTDIR=~/.config/dunst
 
-if [[ -d "$DUNSTDIR" ]]; then
-	# dunstrc
-	rsync -rtuv dunstrc "$DUNSTDIR/dunstrc"
-	rsync -rtuv "$DUNSTDIR/dunstrc" dunstrc
+if [[ ! -d "$DUNSTDIR" ]]; then
+	mkdir -p "$DUNSTDIR"
 fi
+
+rsync -rtuv dunstrc "$DUNSTDIR/dunstrc"
+rsync -rtuv "$DUNSTDIR/dunstrc" dunstrc

@@ -192,6 +192,10 @@ if [[ -f "$HOME/.rvm/scripts/rvm" ]]; then
   source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 fi
 
+if [[ -d "$HOME/.rbenv" ]]; then
+  eval "$(~/.rbenv/bin/rbenv init - --no-rehash zsh)"
+fi
+
 if [[ -d "$HOME/.local/kitty.app/bin" ]]; then
   export PATH="$PATH:$HOME/.local/kitty.app/bin"
 fi
@@ -201,11 +205,7 @@ fi
 # Remote machines.
 #
 
-if [[ "$(hostname)" == "locus.cs.cmu.edu" ]]; then
-  module add tmux-2.9a
-
-  if [[ -d "$HOME/cudatoolkit" ]]; then
-    export PATH="$PATH:$HOME/cudatoolkit:$HOME/cudatoolkit/bin"
-    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/cudatoolkit/lib64"
-  fi
+if [[ "$(hostname)" == "Gewisse" ]]; then
+  eval `ssh-agent` > /dev/null
+  ssh-add 2> /dev/null
 fi
