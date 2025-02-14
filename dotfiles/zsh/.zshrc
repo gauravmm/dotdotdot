@@ -192,6 +192,15 @@ if [[ -f "$HOME/.rvm/scripts/rvm" ]]; then
   source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 fi
 
+if [[ -d "$HOME/.rbenv" ]]; then
+  eval "$(~/.rbenv/bin/rbenv init - --no-rehash zsh)"
+fi
+
+if [[ -d "$HOME/.local/kitty.app/bin" ]]; then
+  export PATH="$PATH:$HOME/.local/kitty.app/bin"
+fi
+
+
 #
 # Remote machines.
 #
