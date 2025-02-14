@@ -199,4 +199,5 @@ fi
 if [[ "$(hostname)" == "Gewisse" ]]; then
   eval `ssh-agent` > /dev/null
   ssh-add 2> /dev/null
+  ssh-add ~/.ssh/id_ed25519_imcb 2> /dev/null
 fi
