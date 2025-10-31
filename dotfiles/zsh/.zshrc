@@ -210,4 +210,7 @@ if [[ "$(hostname)" == "Gewisse" ]]; then
   eval `ssh-agent` > /dev/null
   ssh-add 2> /dev/null
   ssh-add ~/.ssh/id_ed25519_imcb 2> /dev/null
+
+  export DISPLAY=$(ip route list default | awk '{print $3}'):0
+  export LIBGL_ALWAYS_INDIRECT=1
 fi
