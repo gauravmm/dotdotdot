@@ -298,7 +298,7 @@ _git_check_remote() {
 # From https://stackoverflow.com/a/246128
 DOTROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/dotfiles"
 
-while getopts ":vd:" optname; do
+while getopts ":vdg:" optname; do
     case "$optname" in
         "v")
             _SCRIPT_DEBUG=true
