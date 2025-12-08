@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Check that prerequisites are installed
-for cmd in git rsync; do
+for cmd in bc git rsync ssh; do
     which "$cmd" > /dev/null 2>&1
     if [[ $? != 0 ]]; then
         echo "$cmd is missing; install it to run dotdotdot"
@@ -15,6 +15,7 @@ done
 AUTO_CHMOD=true
 DOTLOG="dot.log"
 _SCRIPT_DEBUG=false
+_SKIP_GIT=false
 
 
 #
@@ -307,13 +308,9 @@ while getopts ":vd:" optname; do
             DOTROOT="$OPTARG"
             _debug "DOTROOT set to $DOTROOT."
             ;;
-        "?")
-            echo "Unknown option $OPTARG. Halting..."
-            exit 1
-            ;;
-        ":") 
-            _error "Value expected for option -$OPTARG. Halting..."
-            exit 1
+        "g")
+            _SKIP_GIT=true
+            _debug "DOTROOT set to $DOTROOT."
             ;;
         *)
             _error "Unknown error while processing options. Halting..."
@@ -350,26 +347,31 @@ _info " \____|\___/ \__)\____|\___/ \__)\____|\___/ \__) "
 _info
 _info
 
-# Make sure the git repo is clean first.
-# If the repo is not clean, ask the user if they want to clean it.
-_git_check_local
-_git_run=$?
+if [[ $_SKIP_GIT ]]; then
+    echo "(Skipping git repo check.)"
 
-if [[ $_git_run == 2 ]]; then
-    _error "Halting."
-    exit_unlock 0
-fi
-
-if [[ $_git_run == 0 ]]; then
-    # Pull updates from the remote repository if necessary
-    _info "Updating:" $COLOR_TITLE
-    _git_check_remote
+else
+    # Make sure the git repo is clean first.
+    # If the repo is not clean, ask the user if they want to clean it.
+    _git_check_local
     _git_run=$?
-    _info
 
-    if [[ ! $_git_run ]]; then
+    if [[ $_git_run == 2 ]]; then
         _error "Halting."
         exit_unlock 0
+    fi
+
+    if [[ $_git_run == 0 ]]; then
+        # Pull updates from the remote repository if necessary
+        _info "Updating:" $COLOR_TITLE
+        _git_check_remote
+        _git_run=$?
+        _info
+
+        if [[ ! $_git_run ]]; then
+            _error "Halting."
+            exit_unlock 0
+        fi
     fi
 fi
 
