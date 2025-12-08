@@ -11,12 +11,11 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     && rm -rf /var/lib/apt/lists/*
 
 USER ubuntu
+ENV TERM="xterm-256color"
 
 COPY --chown=ubuntu:ubuntu . /home/ubuntu/.dotdotdot
 WORKDIR /home/ubuntu/.dotdotdot
 RUN ["sh", "-c", "~/.dotdotdot/dotdotdot -v"]
 RUN ["zsh", "-c", "echo Initialized zsh"]
-
-ENV TERM="xterm-256color"
 
 ENTRYPOINT ["zsh"]

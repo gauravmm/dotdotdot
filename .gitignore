@@ -4,8 +4,9 @@ dotfiles/.dotdotdot
 .updated
 .update_lock
 
-# vscode
+# vscode and build
 .vscode/*
+cache/
 
 # Python files
 __pycache__/

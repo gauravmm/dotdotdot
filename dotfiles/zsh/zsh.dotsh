@@ -8,8 +8,8 @@ touch $HISTFILE
 chmod u+rw $HISTFILE
 
 # ZGEN
-ZGENDIR=~/.zgen
-ZGENREPO="https://github.com/tarjoilija/zgen.git"
+ZGENDIR=~/.zgenom
+ZGENREPO="https://github.com/jandamm/zgenom.git"
 
 if [ ! -d $ZGENDIR ]; then
 	git clone "$ZGENREPO" "$ZGENDIR"
