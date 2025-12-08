@@ -53,6 +53,8 @@ export EDITOR='nano'
 SESSION_TYPE="local"
 if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
   SESSION_TYPE="ssh"
+elif [[ "$PPID" -eq 0 ]]; then
+  # Session type is Docker. Pretend we're a local session.
 else
   case $(ps -o comm= -p $PPID) in
     sshd|*/sshd) SESSION_TYPE="ssh";;

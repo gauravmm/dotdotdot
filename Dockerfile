@@ -14,7 +14,9 @@ USER ubuntu
 
 COPY --chown=ubuntu:ubuntu . /home/ubuntu/.dotdotdot
 WORKDIR /home/ubuntu/.dotdotdot
+RUN ["sh", "-c", "~/.dotdotdot/dotdotdot -v"]
+RUN ["zsh", "-c", "echo Initialized zsh"]
 
-# RUN ["./dotdotdot", "-vg"]
+ENV TERM="xterm-256color"
 
-ENTRYPOINT ["zsh", "-c", "~/.dotdotdot/dotdotdot"]
+ENTRYPOINT ["zsh"]
