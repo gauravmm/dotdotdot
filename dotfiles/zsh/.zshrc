@@ -81,14 +81,11 @@ if ! zgenom saved; then
   echo "Generating new zgen file."
 
   # specify plugins here
-  zgenom ohmyzsh
+  zgenom load romkatv/powerlevel10k powerlevel10k
   zgenom ohmyzsh plugins/git
   zgenom ohmyzsh plugins/command-not-found
   zgenom load zdharma-continuum/fast-syntax-highlighting
   zgenom load zsh-users/zsh-autosuggestions
-
-  #zgen load gauravmm/zsh-theme themes/gmm-zsh
-  zgenom load romkatv/powerlevel10k powerlevel10k
 
   # generate the init script from plugins above
   zgenom save

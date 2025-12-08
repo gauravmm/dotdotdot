@@ -9,11 +9,11 @@ chmod u+rw $HISTFILE
 
 # ZGEN
 ZGENDIR=~/.zgenom
-ZGENREPO="https://github.com/jandamm/zgenom.git"
-
 if [ ! -d $ZGENDIR ]; then
-	git clone "$ZGENREPO" "$ZGENDIR"
+	git clone "https://github.com/jandamm/zgenom.git" "$ZGENDIR"
 fi
+
+
 
 # .zshrc
 rsync -rtuv .zshrc ~/.zshrc
