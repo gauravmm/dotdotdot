@@ -18,12 +18,12 @@ blocks:
         leading_diamond: <#707070></>
         trailing_diamond: ""
         background: "#303030"
-        foreground: "#95ffa4"
         foreground_templates:
           - "{{ if or (.Working.Changed) (.Staging.Changed) }}#ff9248{{ end }}"
           - "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#f26d50{{ end }}"
           - "{{ if gt .Ahead 0 }}#89d1dc{{ end }}"
           - "{{ if gt .Behind 0 }}#c5b6ad{{ end }}"
+          - "#5de96f"
         properties:
           branch_ahead_icon: ↑
           branch_behind_icon: ↓
@@ -49,13 +49,16 @@ blocks:
     segments:
       - type: status
         style: powerline
-        powerline_symbol: 
+        powerline_symbol: 
+        invert_powerline: true # Show it leftwards.
         background: "#ff8080"
         foreground: "#ffffff"
-        template: " error "
+        template: "{{ if or (eq .Code 0) (eq .Code 127) }}{{ else }} {{ .String }} {{ end }}"
 
       - type: session
-        style: plain
+        style: powerline
+        powerline_symbol: 
+        invert_powerline: true
         foreground_templates:
           - "{{ if .Root -}}#ff8080{{ end }}"
           - "{{ if .SSHSession -}}#007acc{{ end }}"
@@ -65,28 +68,22 @@ blocks:
           {{ if .SSHSession }} {{ end }}
           {{ if or .Root .SSHSession }}{{ .UserName }}@{{ .HostName }}{{ end }}
 
-      - type: text
-        style: plain
-        template: " | "
-        foreground: "#757575"
-
       - type: time
-        style: plain
-        foreground: "#689f38"
+        style: powerline
+        powerline_symbol: 
+        invert_powerline: true
+        background: "#303030"
+        foreground: "#59909E"
         properties:
           time_format: "15:04:05"
-        template: "{{ .CurrentDate | date .Format }}"
+        template: " {{ .CurrentDate | date .Format }} "
 
   - type: prompt
     alignment: left
     segments:
-      - foreground: "#757575"
-        style: plain
-        template: "└ "
-        type: text
       - foreground: "#ffffff"
         style: plain
-        template: $
+        template: ❯
         type: text
 
 final_space: true
