@@ -24,6 +24,6 @@ fi
 rsync -rtuv .zshrc ~/.zshrc
 rsync -rtuv ~/.zshrc .zshrc
 
-# .p10k.zsh
-rsync -rtuv .p10k.zsh ~/.p10k.zsh
-rsync -rtuv ~/.p10k.zsh .p10k.zsh
+# .gauravmm.omp.json
+rsync -rtuv .gauravmm.omp.json ~/.gauravmm.omp.json
+rsync -rtuv ~/.gauravmm.omp.json .gauravmm.omp.json

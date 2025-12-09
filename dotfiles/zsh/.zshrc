@@ -88,13 +88,10 @@ if ! zgenom saved; then
 fi
 
 if which oh-my-posh; then
-	eval "$(oh-my-posh init zsh)"
+	eval "$(oh-my-posh init zsh --config ${HOME}/.gauravmm.omp.json)"
 else
 	echo "Error: oh-my-posh is not loaded."
 fi
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-# [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # Add dotdotdot and scripts to PATH
 export PATH=$PATH:~/.dotdotdot/bin:~/scripts
