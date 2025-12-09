@@ -55,6 +55,17 @@ blocks:
         foreground: "#ffffff"
         template: "{{ if or (eq .Code 0) (eq .Code 127) }}{{ else }} {{ .String }} {{ end }}"
 
+      - type: executiontime
+        style: powerline
+        powerline_symbol: 
+        invert_powerline: true
+        foreground: "#707070"
+        background: "#303030"
+        template: " {{ .FormattedMs }} "
+        properties:
+          threshold: 2000
+          style: round
+
       - type: session
         style: powerline
         powerline_symbol: 
@@ -85,6 +96,11 @@ blocks:
         style: plain
         template: ❯
         type: text
+
+transient_prompt:
+  background: transparent
+  foreground: "#ffffff"
+  template: "{{ .Shell }} {{ .Code }} {{ .String }}> "
 
 final_space: true
 version: 3
