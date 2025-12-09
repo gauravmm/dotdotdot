@@ -7,7 +7,7 @@ RUN rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloa
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates bc git zsh curl rsync wget ssh \
+    ca-certificates bc git zsh curl rsync wget ssh unzip \
     && rm -rf /var/lib/apt/lists/*
 
 USER ubuntu

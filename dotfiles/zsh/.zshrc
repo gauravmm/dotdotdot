@@ -1,9 +1,9 @@
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+# fi
 
 # Lines configured by zsh-newuser-install
 HISTFILE=~/.histfile
@@ -40,6 +40,12 @@ bindkey '\e[F' end-of-line
 #
 # Environment Variables & Config
 #
+
+# Local bin path. Oh-my-posh uses this.
+if [[ ! -d "${HOME}/.local/bin" ]]; then
+  mkdir -p "${HOME}/.local/bin"
+fi
+export PATH="$PATH:$HOME/.local/bin"
 
 # General aliases
 alias ls='ls --color'
@@ -81,7 +87,7 @@ if ! zgenom saved; then
   echo "Generating new zgen file."
 
   # specify plugins here
-  zgenom load romkatv/powerlevel10k powerlevel10k
+  # zgenom load romkatv/powerlevel10k powerlevel10k
   zgenom ohmyzsh plugins/git
   zgenom ohmyzsh plugins/command-not-found
   zgenom load zdharma-continuum/fast-syntax-highlighting
@@ -91,8 +97,14 @@ if ! zgenom saved; then
   zgenom save
 fi
 
+if which oh-my-posh ; then 
+  eval "$(oh-my-posh init zsh)"
+else
+  echo "Error: oh-my-posh is not loaded."
+fi
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+# [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 # Add dotdotdot and scripts to PATH
 export PATH=$PATH:~/.dotdotdot/bin:~/scripts
@@ -108,9 +120,6 @@ if [[ -d "/usr/lib/nvidia" ]]; then
 fi
 
 # Scripts directory
-if [[ -d "${HOME}/.local/bin" ]]; then
-  export PATH="$PATH:$HOME/.local/bin"
-fi
 if [[ -d "/data/scripts" ]]; then
   export PATH=/data/scripts:$PATH
 fi

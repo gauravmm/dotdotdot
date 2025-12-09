@@ -9,11 +9,16 @@ chmod u+rw $HISTFILE
 
 # ZGEN
 ZGENDIR=~/.zgenom
-if [ ! -d $ZGENDIR ]; then
+if [ ! -d "$ZGENDIR" ]; then
 	git clone "https://github.com/jandamm/zgenom.git" "$ZGENDIR"
 fi
 
-
+# We need this for OhMyPosh
+if [ ! -x "~/.local/bin/oh-my-posh" ]; then
+	mkdir -p "~/.local/bin"
+	export PATH="$PATH:~/.local/bin"
+	curl -s https://ohmyposh.dev/install.sh | bash -s
+fi
 
 # .zshrc
 rsync -rtuv .zshrc ~/.zshrc
