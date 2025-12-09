@@ -15,7 +15,7 @@ done
 AUTO_CHMOD=true
 DOTLOG="dot.log"
 _SCRIPT_DEBUG=false
-_SKIP_GIT=false
+_SKIP_GIT=0
 
 
 #
@@ -309,8 +309,8 @@ while getopts ":vdg:" optname; do
             _debug "DOTROOT set to $DOTROOT."
             ;;
         "g")
-            _SKIP_GIT=true
-            _debug "DOTROOT set to $DOTROOT."
+            _SKIP_GIT=1
+            _debug "Skipping Git check"
             ;;
         *)
             _error "Unknown error while processing options. Halting..."
@@ -347,7 +347,7 @@ _info " \____|\___/ \__)\____|\___/ \__)\____|\___/ \__) "
 _info
 _info
 
-if [[ $_SKIP_GIT ]]; then
+if [[ ! $_SKIP_GIT ]]; then
     echo "(Skipping git repo check.)"
 
 else
