@@ -86,6 +86,13 @@ if ! zgenom saved; then
 
 	# Weekly update tasks:
 	oh-my-posh upgrade
+
+	if [[ -x "${HOME}/.dotdotdot/update" ]]; then
+		(
+			cd ${HOME}/.dotdotdot
+			./update
+		)
+	fi
 fi
 
 if which oh-my-posh; then

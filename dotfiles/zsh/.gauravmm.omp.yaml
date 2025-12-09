@@ -3,6 +3,7 @@ $schema: >-
 blocks:
   - type: prompt
     alignment: left
+    newline: true
     segments:
       - type: path
         style: plain
@@ -28,7 +29,7 @@ blocks:
           branch_ahead_icon: ↑
           branch_behind_icon: ↓
           branch_gone: ≢
-          branch_icon: " "
+          branch_icon: ""
           branch_identical_icon: ≡
           cherry_pick_icon: "✓ "
           commit_icon: "▷ "
@@ -53,7 +54,7 @@ blocks:
         invert_powerline: true
         background: "#ff8080"
         foreground: "#ffffff"
-        template: "{{ if or (eq .Code 0) (eq .Code 127) }}{{ else }} <b>{{ .String }}</b> {{ end }}"
+        template: "{{ if or (eq .Code 0) (eq .Code 127) (eq .Code 130) }}{{ else }} <b>{{ .String }}</b> {{ end }}"
 
       - type: text
         style: plain
@@ -72,9 +73,14 @@ blocks:
       - type: python # TODO: Update this.
         style: diamond
         trailing_diamond: <#707070></>
-        foreground: "#376FA0" # 376FA0
+        foreground: "#FFD43B"
         background: "#303030"
-        template: " {{ .Full }}  "
+        template: >-
+           {{ if .Error -}}
+            <#ff8080> {{ .Error }}</>
+          {{- else -}}
+            {{ if .Venv -}}{{ .Venv }}{{- else -}}{{ .Full }}{{- end -}}
+          {{- end }}   
 
       - type: session
         style: diamond
@@ -105,5 +111,9 @@ blocks:
         template: ❯
         type: text
 
+ignored_return_codes:
+  - 0
+  - 127
+  - 130
 final_space: true
 version: 3
