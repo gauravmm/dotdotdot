@@ -24,6 +24,6 @@ fi
 rsync -rtuv .zshrc ~/.zshrc
 rsync -rtuv ~/.zshrc .zshrc
 
-# .gauravmm.omp.json
-rsync -rtuv .gauravmm.omp.json ~/.gauravmm.omp.json
-rsync -rtuv ~/.gauravmm.omp.json .gauravmm.omp.json
+# Oh-my-posh config
+rsync -rtuv .gauravmm.omp.yaml ~/.gauravmm.omp.yaml
+rsync -rtuv ~/.gauravmm.omp.yaml .gauravmm.omp.yaml

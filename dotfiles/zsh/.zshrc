@@ -74,10 +74,8 @@ zgenom autoupdate
 
 # if the init scipt doesn't exist
 if ! zgenom saved; then
-	echo "Generating new zgen file."
+	echo "Generating new zgenom file."
 
-	# specify plugins here
-	# zgenom load romkatv/powerlevel10k powerlevel10k
 	zgenom ohmyzsh plugins/git
 	zgenom ohmyzsh plugins/command-not-found
 	zgenom load zdharma-continuum/fast-syntax-highlighting
@@ -85,10 +83,13 @@ if ! zgenom saved; then
 
 	# generate the init script from plugins above
 	zgenom save
+
+	# Weekly update tasks:
+	oh-my-posh upgrade
 fi
 
 if which oh-my-posh; then
-	eval "$(oh-my-posh init zsh --config ${HOME}/.gauravmm.omp.json)"
+	eval "$(oh-my-posh init zsh --config ${HOME}/.gauravmm.omp.yaml)"
 else
 	echo "Error: oh-my-posh is not loaded."
 fi
