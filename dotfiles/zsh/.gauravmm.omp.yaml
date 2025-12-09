@@ -50,39 +50,48 @@ blocks:
       - type: status
         style: powerline
         powerline_symbol: 
-        invert_powerline: true # Show it leftwards.
+        invert_powerline: true
         background: "#ff8080"
         foreground: "#ffffff"
         template: "{{ if or (eq .Code 0) (eq .Code 127) }}{{ else }} {{ .String }} {{ end }}"
 
+      - type: text
+        style: plain
+        template: 
+        foreground: "#303030"
+
       - type: executiontime
-        style: powerline
-        powerline_symbol: 
-        invert_powerline: true
+        style: diamond
+        trailing_diamond: <#707070></>
         foreground: "#707070"
         background: "#303030"
-        template: " {{ .FormattedMs }} "
+        template: "{{ if gt .Ms 1000 }} {{ .FormattedMs }} {{ end }}"
         properties:
-          threshold: 2000
           style: round
+          always_enabled: true
+
+      - type: python # TODO: Update this.
+        style: diamond
+        trailing_diamond: <#707070></>
+        foreground: "#376FA0" # 376FA0
+        background: "#303030"
+        template: " {{ .Full }}  "
 
       - type: session
-        style: powerline
-        powerline_symbol: 
-        invert_powerline: true
+        style: diamond
+        trailing_diamond: <#707070></>
+        background: "#303030"
         foreground_templates:
           - "{{ if .Root -}}#ff8080{{ end }}"
           - "{{ if .SSHSession -}}#007acc{{ end }}"
-          - "#757575"
+          - "#707070"
         template: >-
           {{ if .Root }} {{ end }}
           {{ if .SSHSession }} {{ end }}
           {{ if or .Root .SSHSession }}{{ .UserName }}@{{ .HostName }}{{ end }}
 
       - type: time
-        style: powerline
-        powerline_symbol: 
-        invert_powerline: true
+        style: plain
         background: "#303030"
         foreground: "#59909E"
         properties:
@@ -98,9 +107,23 @@ blocks:
         type: text
 
 transient_prompt:
-  background: transparent
+  background: "transparent"
   foreground: "#ffffff"
-  template: "{{ .Shell }} {{ .Code }} {{ .String }}> "
+  # Note the use of a non-breaking space after the arrow to prevent the autoformatting.
+  template: >-
+    <#ffffff,#000000> ⭨ {{ .PromptCount }} </->
+    <#000000,#303030></><#ffffff,#303030>
+    {{- if not (eq .Segments.ExecutionTime.FormattedMs "") }} {{ .Segments.ExecutionTime.FormattedMs }} <#707070></>{{ end -}}
+    {{ if .Segments.Session.Root }}<#ff8080> </>{{ end -}}
+    {{ if .Segments.Session.SSHSession }}<#007acc> </>{{ end -}}
+     {{ .UserName }}@{{ .HostName}} </>
+    {{- if or (eq .Code 0) (eq .Code 127) -}}
+      <#303030,transparent></>
+    {{ else -}}
+      <#303030,#ff8080> {{ .Segments.Status.String }} </><#ff8080,transparent></>
+    {{ end }}
+
+    ❯ 
 
 final_space: true
 version: 3
