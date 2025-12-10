@@ -95,7 +95,7 @@ if ! zgenom saved; then
 	fi
 fi
 
-if which oh-my-posh; then
+if which oh-my-posh &>/dev/null; then
 	eval "$(oh-my-posh init zsh --config ${HOME}/.gauravmm.omp.yaml)"
 else
 	echo "Error: oh-my-posh is not loaded."
