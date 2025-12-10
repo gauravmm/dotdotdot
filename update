@@ -1,23 +1,27 @@
 #!/bin/bash
 
-cd "$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-if [[ ! -x "dotdotdot" ]]; then 
-    echo "Error: run update in the same directory as dotdotdot."
-    exit 1
+if [[ ! -x "dotdotdot" ]]; then
+	echo "Error: run update in the same directory as dotdotdot."
+	exit 1
 fi
 
-LOCKFILE=".update_lock"
+LOCKFILE="${HOME}/.dotdotdot/.update_lock"
 ULOCKFD=199
 _unlock() { flock -u $ULOCKFD; }
-exit_unlock() { trap - EXIT; _unlock; rm $LOCKFILE; exit $1; }
+exit_unlock() {
+	trap - EXIT
+	_unlock
+	exit $1
+}
 # Obtain an exclusive lock immediately or fail:
 exlock_now() {
-    eval "exec $ULOCKFD>\"$LOCKFILE\"";
-    if ! flock -xn $ULOCKFD ; then
-        exit 0
-    fi
-    trap "_unlock; rm $LOCKFILE;" EXIT;
+	eval "exec $ULOCKFD>\"$LOCKFILE\""
+	if ! flock -xn $ULOCKFD; then
+		exit 0
+	fi
+	trap "_unlock;" EXIT
 }
 
 # Acquire the lock or fail.
@@ -26,21 +30,30 @@ exlock_now
 t_prev="$(cat .updated 2>/dev/null)"
 t_curr="$(date '+%s')"
 if [[ ! -z "${t_prev}" ]]; then
-    t_diff=$(($t_curr - $t_prev))
-    if [[ $t_diff -lt 259200 ]]; then
-        exit_unlock 0   
-    fi
+	t_diff=$(($t_curr - $t_prev))
+	if [[ $t_diff -lt 259200 ]]; then
+		exit_unlock 0
+	fi
 fi
 
 # Ask if we can update:
-echo -en "Do you want to run dotdotdot to update your configuration (Y/n)?"
-read -n 1 -t 2 toupdate
-echo
+case "$-" in
+*i*)
+	echo -en "Do you want to run dotdotdot to update your configuration (Y/n)?"
+	read -n 1 -t 2 toupdate
+	echo
 
-if [[ $toupdate != "n" && $toupdate != "N" ]]; then
-    if ./dotdotdot ; then
-        date '+%s' > .updated
-    fi
+	if [[ $toupdate == "n" || $toupdate == "N" ]]; then
+		exit_unlock 0
+	fi
+	;;
+*)
+	echo "Running in the background or non-interactive."
+	;;
+esac
+
+if ./dotdotdot; then
+	date '+%s' >.updated
 fi
 
 exit_unlock 0

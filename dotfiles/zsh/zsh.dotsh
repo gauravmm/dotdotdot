@@ -7,18 +7,22 @@ HISTFILE=~/.histfile
 touch $HISTFILE
 chmod u+rw $HISTFILE
 
-# ZGEN
-ZGENDIR=~/.zgenom
-if [ ! -d $ZGENDIR ]; then
+ZGENDIR="${HOME}/.zgenom"
+if [ ! -d "$ZGENDIR" ]; then
 	git clone "https://github.com/jandamm/zgenom.git" "$ZGENDIR"
 fi
 
-
+# We need this for OhMyPosh
+if [ ! -x "${HOME}/.local/bin/oh-my-posh" ]; then
+	mkdir -p "${HOME}/.local/bin"
+	export PATH="$PATH:${HOME}/.local/bin"
+	curl -s https://ohmyposh.dev/install.sh | bash -s
+fi
 
 # .zshrc
-rsync -rtuv .zshrc ~/.zshrc
-rsync -rtuv ~/.zshrc .zshrc
+rsync -rtuv .zshrc ${HOME}/.zshrc
+rsync -rtuv ${HOME}/.zshrc .zshrc
 
-# .p10k.zsh
-rsync -rtuv .p10k.zsh ~/.p10k.zsh
-rsync -rtuv ~/.p10k.zsh .p10k.zsh
+# Oh-my-posh config
+rsync -rtuv .gauravmm.omp.yaml ${HOME}/.gauravmm.omp.yaml
+rsync -rtuv ${HOME}/.gauravmm.omp.yaml .gauravmm.omp.yaml
