@@ -27,7 +27,7 @@ blocks:
           - "{{ if gt .Ahead 0 }}#91ddff{{ end }}"
           - "{{ if gt .Behind 0 }}#c184e0{{ end }}"
           - "#5de96f"
-        properties:
+        options:
           branch_ahead_icon: ↑
           branch_behind_icon: ↓
           branch_gone: ≢
