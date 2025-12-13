@@ -12,7 +12,7 @@ blocks:
         options:
           style: unique
         template: >-
-          {{ if gt .StackCount 0 }}<#000000,#91ddff><b> {{ .StackCount }} </b></><#91ddff,#303030></>{{ end }}
+          {{ if gt .StackCount 0 }}<#707070><b> {{ printf "%02d" .StackCount }} </b></><#707070></>{{ end }}
           <b>{{ path .Path .Location }}</b> 
 
       - type: git
