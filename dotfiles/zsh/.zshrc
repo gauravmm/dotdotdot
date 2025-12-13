@@ -72,6 +72,10 @@ fi
 source "${HOME}/.zgenom/zgenom.zsh"
 zgenom autoupdate
 
+znt_list_bold=1
+znt_list_colorpair="default/default"
+znt_list_border=1
+
 # if the init scipt doesn't exist
 if ! zgenom saved; then
 	echo "Generating new zgenom file."
@@ -79,7 +83,8 @@ if ! zgenom saved; then
 	zgenom ohmyzsh plugins/git
 	zgenom ohmyzsh plugins/command-not-found
 	zgenom load zdharma-continuum/fast-syntax-highlighting
-	zgenom load zsh-users/zsh-autosuggestions
+	zgenom load zsh-users/zsh-autocomplete
+	zgenom load z-shell/zsh-navigation-tools
 
 	# generate the init script from plugins above
 	zgenom save
@@ -151,6 +156,26 @@ export LS_COLORS='rs=0:di=01;94:ln=01;96:mh=00:pi=40;33:so=01;95:do=01;95:bd=40;
 if [[ -d "/snap/bin" ]]; then
 	export PATH="/snap/bin:${PATH}"
 fi
+
+#
+# Shortcuts
+#
+
+alias gst="git status"
+# Setup upstream remote
+function grm() {
+	BRCH=`git branch`
+	if [ $? -ne 0 ] ; then
+		return
+	fi
+
+	BRCH=`echo "$BRCH" | tr -d '* '`
+	if [[ "${#BRCH}" -gt 3 ]]; then
+		git branch --set-upstream-to="origin/$BRCH"
+	else
+		echo "Current branch not recognized: $BRCH"
+	fi
+}
 
 #
 # Remote machines.
