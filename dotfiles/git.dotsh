@@ -6,5 +6,5 @@ if ! git config --global --get user.name; then
     git config --global core.editor nano
     git config --global push.default matching
     git config --global help.autocorrect 5
+    git config --global init.defaultBranch master
 fi
-git config --global push.default matching
