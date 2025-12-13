@@ -9,7 +9,7 @@ blocks:
         style: plain
         background: "#303030"
         foreground: "#91ddff"
-        properties:
+        options:
           style: unique
         template: >-
           {{ if gt .StackCount 0 }}<#000000,#91ddff><b> {{ .StackCount }} </b></><#91ddff,#303030></>{{ end }}
@@ -30,7 +30,7 @@ blocks:
         options:
           branch_ahead_icon: ↑
           branch_behind_icon: ↓
-          branch_gone: ≢
+          branch_gone_icon: ≢
           branch_icon: ""
           branch_identical_icon: ≡
           cherry_pick_icon: "✓ "
@@ -68,7 +68,7 @@ blocks:
         trailing_diamond: <#707070></>
         foreground: "#707070"
         background: "#303030"
-        properties:
+        options:
           style: round
           threshold: 1000
 
@@ -101,7 +101,7 @@ blocks:
         style: plain
         background: "#303030"
         foreground: "#59909E"
-        properties:
+        options:
           time_format: "15:04:05"
         template: " {{ .CurrentDate | date .Format }} "
 
@@ -113,9 +113,5 @@ blocks:
         template: ❯
         type: text
 
-ignored_return_codes:
-  - 0
-  - 127
-  - 130
 final_space: true
 version: 3
