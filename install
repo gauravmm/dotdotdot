@@ -2,16 +2,16 @@
 
 BRANCH="master"
 
-if ! which git ; then 
-    echo "Error: please install git first."
-    exit 1
+if ! which git; then
+	echo "Error: please install git first."
+	exit 1
 fi
 
 cd ~
 
-if ! git clone --depth 1 https://github.com/gauravmm/dotdotdot.git .dotdotdot ; then
-    echo "Error: cannot clone repository, try installing manually."
-    exit 1
+if ! git clone --depth 1 https://github.com/gauravmm/dotdotdot.git .dotdotdot; then
+	echo "Error: cannot clone repository, try installing manually."
+	exit 1
 fi
 
 cd .dotdotdot

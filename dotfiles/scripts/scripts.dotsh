@@ -1,9 +1,8 @@
 #!/bin/bash
 
-if ! [[ -d "$HOME/Desktop" ]]; then
-    echo "~/Desktop directory missing, so UI scripts are not needed."
-    exit 127
-fi
+SCRIPTS_PATH="$HOME/.local/bin/"
 
-mkdir -p ~/.scripts
-rsync --exclude "*.dotsh" -rc "./" ~/.scripts
+if [[ ! -d "$SCRIPTS_PATH" ]]; then
+	mkdir -p "$SCRIPTS_PATH"
+fi
+rsync --exclude "*.dotsh" -rc "./" "$SCRIPTS_PATH"

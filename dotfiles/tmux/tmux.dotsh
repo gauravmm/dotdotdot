@@ -2,8 +2,8 @@
 set -e
 
 if ! which tmux; then
-    echo "tmux is not installed."
-    exit 127
+	echo "tmux is not installed."
+	exit 127
 fi
 
 rsync -rtuv .tmux.conf ~/.tmux.conf

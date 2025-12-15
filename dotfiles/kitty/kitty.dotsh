@@ -2,11 +2,9 @@
 set -e
 
 if ! which kitty; then
-    echo "kitty is not installed."
-    exit 127
+	echo "kitty is not installed."
+	exit 127
 fi
-
-
 
 rsync -rtuv kitty.conf ~/.config/kitty/kitty.conf
 rsync -rtuv ~/.config/kitty/kitty.conf kitty.conf
