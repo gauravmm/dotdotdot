@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [[ ! -f "$HOME/.local/bin/uv" ]]; then
+	if [[ ! -d "$HOME/.local/bin/" ]]; then
+		mkdir -p "$HOME/.local/bin/"
+	fi
+
+	UV_INSTALL_DIR="$HOME/.local/bin/" curl -LsSf https://astral.sh/uv/install.sh | sh
+fi
