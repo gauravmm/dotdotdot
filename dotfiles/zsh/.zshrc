@@ -82,10 +82,10 @@ if ! zgenom saved; then
 
 	zgenom ohmyzsh plugins/git
 	zgenom ohmyzsh plugins/command-not-found
+	zgenom ohmyzsh zsh-autoswitch-virtualenv
 	zgenom load zdharma-continuum/fast-syntax-highlighting
 	zgenom load zsh-users/zsh-autocomplete
 	zgenom load z-shell/zsh-navigation-tools
-
 	# generate the init script from plugins above
 	zgenom save
 
@@ -129,9 +129,9 @@ if [[ -d "$HOME/.pyenv" ]]; then
 	export PYENV_ROOT="$HOME/.pyenv"
 	export PATH="$PYENV_ROOT/bin:$PATH"
 	eval "$(pyenv init -)"
-	eval "$(pyenv virtualenv-init -)"
+	# eval "$(pyenv virtualenv-init -)"
 	# Adopt new behaviour to disable the annoying notice:
-	export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+	# export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 fi
 
 # Google Cloud SDK.
@@ -164,12 +164,12 @@ fi
 alias gst="git status"
 # Setup upstream remote
 function grm() {
-	BRCH=`git branch`
-	if [ $? -ne 0 ] ; then
+	BRCH=$(git branch)
+	if [ $? -ne 0 ]; then
 		return
 	fi
 
-	BRCH=`echo "$BRCH" | tr -d '* '`
+	BRCH=$(echo "$BRCH" | tr -d '* ')
 	if [[ "${#BRCH}" -gt 3 ]]; then
 		git branch --set-upstream-to="origin/$BRCH"
 	else
