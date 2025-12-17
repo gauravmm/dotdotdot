@@ -75,6 +75,7 @@ zgenom autoupdate
 znt_list_bold=1
 znt_list_colorpair="default/default"
 znt_list_border=1
+znt_list_instant_select=1
 
 # if the init scipt doesn't exist
 if ! zgenom saved; then
