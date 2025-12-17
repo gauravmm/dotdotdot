@@ -4,12 +4,18 @@ if ! git config --global --get user.name; then
 	git config --global user.name "Gaurav Manek"
 	git config --global user.email "gaurav@gauravmanek.com"
 	git config --global core.editor nano
-	git config --global push.default matching
+	git config --global push.default simple
 	git config --global help.autocorrect 5
 	git config --global init.defaultBranch master
+	git config --global push.autoSetupRemote true
 fi
 
 if which delta &>/dev/null; then
 	git config --global core.pager "delta"
 	git config --global interactive.diffFilter "delta --color-only"
+fi
+
+if [[ "$(git config --global push.default)" -ne "simple" ]]; then
+	git config --global push.default "simple"
+	git config --global push.autoSetupRemote true
 fi
