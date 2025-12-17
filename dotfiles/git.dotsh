@@ -15,7 +15,7 @@ if which delta &>/dev/null; then
 	git config --global interactive.diffFilter "delta --color-only"
 fi
 
-if [[ "$(git config --global push.default)" -ne "simple" ]]; then
+if ! [[ "$(git config --global push.default)" != "simple" ]]; then
 	git config --global push.default "simple"
 	git config --global push.autoSetupRemote true
 fi
