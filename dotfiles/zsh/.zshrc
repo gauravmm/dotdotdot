@@ -170,13 +170,12 @@ export LS_COLORS='rs=0:di=01;94:ln=01;96:mh=00:pi=40;33:so=01;95:do=01;95:bd=40;
 
 alias gst="git status"
 # Setup upstream remote
-function grm() {
-	BRCH=$(git branch)
+function gitremote() {
+	BRCH=$(git branch --show-current)
 	if [ $? -ne 0 ]; then
 		return
 	fi
 
-	BRCH=$(echo "$BRCH" | tr -d '* ')
 	if [[ "${#BRCH}" -gt 3 ]]; then
 		git branch --set-upstream-to="origin/$BRCH"
 	else
