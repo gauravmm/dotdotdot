@@ -155,6 +155,7 @@ fi
 #
 
 addpath "$HOME/.dotdotdot"
+addpath "/snap/bin"
 
 # cat with syntax highlighting
 if which batcat &>/dev/null; then
