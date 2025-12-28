@@ -112,6 +112,10 @@ if ! zgenom saved; then
 	fi
 fi
 
+# Case-insensitive completion
+zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
+autoload -Uz compinit && compinit
+
 if which oh-my-posh &>/dev/null; then
 	eval "$(oh-my-posh init zsh --config ${HOME}/.gauravmm.omp.yaml)"
 else
