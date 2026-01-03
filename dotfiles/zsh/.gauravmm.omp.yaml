@@ -95,7 +95,7 @@ blocks:
         template: >-
           {{ if .Root }} {{ end }}
           {{ if .SSHSession }} {{ end }}
-          {{ if or .Root .SSHSession }}{{ .UserName }}@{{ .HostName }}{{ end }}
+          {{ if or .Root .SSHSession }}{{ .UserName }}@{{ .HostName }} {{ end }}
 
       - type: time
         style: plain
