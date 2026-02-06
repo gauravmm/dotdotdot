@@ -94,7 +94,7 @@ if ! zgenom saved; then
 
 	zgenom ohmyzsh plugins/git
 	zgenom ohmyzsh plugins/command-not-found
-	zgenom ohmyzsh zsh-autoswitch-virtualenv
+	zgenom load MichaelAquilina/zsh-autoswitch-virtualenv
 	zgenom load zdharma-continuum/fast-syntax-highlighting
 	zgenom load zsh-users/zsh-autocomplete
 	zgenom load z-shell/zsh-navigation-tools
