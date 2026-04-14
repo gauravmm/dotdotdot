@@ -1,6 +1,6 @@
 HISTFILE=~/.histfile
-HISTSIZE=1000
-SAVEHIST=9999
+HISTSIZE=50000
+SAVEHIST=50000
 setopt appendhistory extendedglob
 unsetopt autocd beep nomatch
 bindkey -e
@@ -55,19 +55,8 @@ alias clear='echo -ne "\e[0;$[LINES]r"'
 # Default Editor
 export EDITOR='nano'
 
-# Detect if this is an ssh session
-# TODO: Remove. Oh-my-posh provides this natively.
-# SESSION_TYPE="local"
-# if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
-# 	SESSION_TYPE="ssh"
-# elif [[ "$PPID" -eq 0 ]]; then
-# 	# Session type is Docker. Pretend we're a local session.
-# else
-# 	case $(ps -o comm= -p $PPID) in
-# 	sshd | */sshd) SESSION_TYPE="ssh" ;;
-# 	esac
-# fi
-# export SESSION_TYPE=$SESSION_TYPE
+# Required for lazy loading.
+export NVM_LAZY_LOAD=true
 
 #
 # dotdotdot updater
@@ -94,7 +83,8 @@ if ! zgenom saved; then
 
 	zgenom ohmyzsh plugins/git
 	zgenom ohmyzsh plugins/command-not-found
-	zgenom load MichaelAquilina/zsh-autoswitch-virtualenv
+	zgenom load ptavares/zsh-direnv
+	zgenom load lukechilds/zsh-nvm
 	zgenom load zdharma-continuum/fast-syntax-highlighting
 	zgenom load zsh-users/zsh-autocomplete
 	zgenom load z-shell/zsh-navigation-tools
@@ -129,47 +119,28 @@ fi
 export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock.$HOST
 
 #
-# Libraries
+# Software
 #
-
-# PyEnv
-# TODO: Remove after testing Visigoth migration.
-if addpath "$HOME/.pyenv/bin"; then
-	export PYENV_ROOT="$HOME/.pyenv"
-	eval "$(pyenv init -)"
-	# eval "$(pyenv virtualenv-init -)"
-	# Adopt new behaviour to disable the annoying notice:
-	# export PYENV_VIRTUALENV_DISABLE_PROMPT=1
-fi
-
-# Google Cloud SDK.
-GOOGLE_CLOUD_SDK_PATH="$HOME/google-cloud-sdk/"
-if addpath "$GOOGLE_CLOUD_SDK_PATH"; then
-	export PATH="$PATH:$GOOGLE_CLOUD_SDK_PATH/bin"
-	. "$GOOGLE_CLOUD_SDK_PATH/path.zsh.inc"
-	. "$GOOGLE_CLOUD_SDK_PATH/completion.zsh.inc"
-fi
 
 if [[ -d "/usr/lib/nvidia" ]]; then
 	export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/lib/nvidia"
 fi
 
-#
-# Software
-#
-
 addpath "$HOME/.dotdotdot"
 addpath "/snap/bin"
+
+# bun
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+export BUN_INSTALL="$HOME/.bun"
+addpath "$BUN_INSTALL/bin"
+
+# opencode
+addpath "$HOME/.opencode/bin"
 
 # cat with syntax highlighting
 if which batcat &>/dev/null; then
 	alias bat="batcat"
 fi
-
-# NVM
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 #
 # Shortcuts
@@ -188,3 +159,5 @@ if [[ "$(hostname)" == "Gewisse" ]]; then
 	ssh-add 2>/dev/null
 	ssh-add ~/.ssh/id_ed25519_imcb 2>/dev/null
 fi
+
+alias unbolt='uv run --python /home/gauravmm/unbolt-project/unbolt/.venv unbolt'
