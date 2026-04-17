@@ -128,6 +128,7 @@ fi
 
 addpath "$HOME/.dotdotdot"
 addpath "/snap/bin"
+addpath "$HOME/.opencode/bin"
 
 # bun
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
