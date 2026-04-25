@@ -12,6 +12,13 @@ LANG=en_US.UTF-8
 LC_ALL=en_US.UTF-8
 
 #
+# Detect AI coding environments
+#
+if [[ -n "$OPENCODE" || -n "$CLAUDE_CODE" || -n "$CODEX" ]]; then
+	export IN_AI_CODING_TOOL=1
+fi
+
+#
 # Additional key bindings
 #
 
@@ -55,61 +62,68 @@ alias clear='echo -ne "\e[0;$[LINES]r"'
 # Default Editor
 export EDITOR='nano'
 
-# Required for lazy loading.
-export NVM_LAZY_LOAD=true
-
-#
-# dotdotdot updater
-#
-if [[ -x ~/.dotdotdot/update ]]; then
-	(~/.dotdotdot/update)
-fi
-
-#
-# ZSH
-#
-source "${HOME}/.zgenom/zgenom.zsh"
-zgenom autoupdate
-
-# ZSH interaction tools options:
-znt_list_bold=1
-znt_list_colorpair="default/default"
-znt_list_border=1
-znt_list_instant_select=1
-
-# if the init scipt doesn't exist
-if ! zgenom saved; then
-	echo "Generating new zgenom file."
-
-	zgenom ohmyzsh plugins/git
-	zgenom ohmyzsh plugins/command-not-found
-	zgenom load ptavares/zsh-direnv
-	zgenom load lukechilds/zsh-nvm
-	zgenom load zdharma-continuum/fast-syntax-highlighting
-	zgenom load zsh-users/zsh-autocomplete
-	zgenom load z-shell/zsh-navigation-tools
-	# generate the init script from plugins above
-	zgenom save
-
-	# Weekly update tasks:
-	oh-my-posh upgrade
-
-	if [[ -x "${HOME}/.dotdotdot/update" ]]; then
-		(
-			cd ${HOME}/.dotdotdot
-			./update
-		)
-	fi
-fi
-
-# Case-insensitive completion
-zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
-autoload -Uz compinit && compinit
-
-if which oh-my-posh &>/dev/null; then
-	eval "$(oh-my-posh init zsh --config ${HOME}/.gauravmm.omp.yaml)"
+# Load nvm eagerly in AI tools (zgenom is skipped there), lazy load via zgenom otherwise
+if [[ -n "$IN_AI_CODING_TOOL" ]]; then
+	export NVM_DIR="$HOME/.nvm"
+	[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
 else
-	echo "Error: oh-my-posh is not loaded."
+	export NVM_LAZY_LOAD=true
+fi
+
+if [[ -z "$IN_AI_CODING_TOOL" ]]; then
+	#
+	# dotdotdot updater
+	#
+	if [[ -x ~/.dotdotdot/update ]]; then
+		(~/.dotdotdot/update)
+	fi
+
+	#
+	# ZSH (skip in AI tools for faster startup)
+	#
+	source "${HOME}/.zgenom/zgenom.zsh"
+	zgenom autoupdate
+
+	# ZSH interaction tools options:
+	znt_list_bold=1
+	znt_list_colorpair="default/default"
+	znt_list_border=1
+	znt_list_instant_select=1
+
+	# if the init scipt doesn't exist
+	if ! zgenom saved; then
+		echo "Generating new zgenom file."
+
+		zgenom ohmyzsh plugins/git
+		zgenom ohmyzsh plugins/command-not-found
+		zgenom load ptavares/zsh-direnv
+		zgenom load lukechilds/zsh-nvm
+		zgenom load zdharma-continuum/fast-syntax-highlighting
+		zgenom load zsh-users/zsh-autocomplete
+		zgenom load z-shell/zsh-navigation-tools
+		# generate the init script from plugins above
+		zgenom save
+
+		# Weekly update tasks:
+		oh-my-posh upgrade
+
+		if [[ -x "${HOME}/.dotdotdot/update" ]]; then
+			(
+				cd ${HOME}/.dotdotdot
+				./update
+			)
+		fi
+	fi
+
+	# Case-insensitive completion (only in interactive shells)
+	zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
+	autoload -Uz compinit && compinit
+
+	if which oh-my-posh &>/dev/null; then
+		eval "$(oh-my-posh init zsh --config ${HOME}/.gauravmm.omp.yaml)"
+	else
+		echo "Error: oh-my-posh is not loaded."
+	fi
 fi
 
 # Support SSH_AUTH_SOCK updating in tmux
@@ -162,3 +176,5 @@ if [[ "$(hostname)" == "Gewisse" ]]; then
 fi
 
 alias unbolt='uv run --python /home/gauravmm/unbolt-project/unbolt/.venv unbolt'
+
+alias claude-alt="CLAUDE_CONFIG_DIR=$HOME/.claude-secondary claude --dangerously-skip-permissions"
