@@ -145,9 +145,11 @@ addpath "/snap/bin"
 addpath "$HOME/.opencode/bin"
 
 # bun
-[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 export BUN_INSTALL="$HOME/.bun"
-addpath "$BUN_INSTALL/bin"
+if [[ -d "$BUN_INSTALL" ]]; then
+	[ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"
+	addpath "$BUN_INSTALL/bin"
+fi
 
 # opencode
 addpath "$HOME/.opencode/bin"
