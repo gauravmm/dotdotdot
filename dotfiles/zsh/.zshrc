@@ -14,7 +14,7 @@ LC_ALL=en_US.UTF-8
 #
 # Detect AI coding environments
 #
-if [[ -n "$OPENCODE" || -n "$CLAUDE_CODE" || -n "$CODEX" ]]; then
+if [[ -n "$OPENCODE" || -n "$CLAUDECODE" || -n "$CODEX" ]]; then
 	export IN_AI_CODING_TOOL=1
 fi
 
@@ -177,4 +177,5 @@ fi
 
 alias unbolt='uv run --python /home/gauravmm/unbolt-project/unbolt/.venv unbolt'
 
-alias claude-alt="CLAUDE_CONFIG_DIR=$HOME/.claude-secondary claude --dangerously-skip-permissions"
+alias claude-alt="CLAUDE_CONFIG_DIR=$HOME/.claude-secondary claude"
+alias claude="claude --dangerously-skip-permissions"
