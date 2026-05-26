@@ -1,6 +1,8 @@
 HISTFILE=~/.histfile
 HISTSIZE=50000
 SAVEHIST=50000
+autoload -Uz compinit
+compinit
 setopt appendhistory extendedglob
 unsetopt autocd beep nomatch
 bindkey -e
@@ -12,11 +14,10 @@ LANG=en_US.UTF-8
 LC_ALL=en_US.UTF-8
 
 #
-# Detect AI coding environments
+# AI coding tool detection happens in ~/.zshenv so it's also active in
+# non-interactive subshells spawned by Claude Code / opencode / codex.
+# IN_AI_CODING_TOOL is set there if any of those env vars are present.
 #
-if [[ -n "$OPENCODE" || -n "$CLAUDECODE" || -n "$CODEX" ]]; then
-	export IN_AI_CODING_TOOL=1
-fi
 
 #
 # Additional key bindings
@@ -50,6 +51,8 @@ addpath() {
 	return 1
 }
 
+addpath "/opt/zerobrew/bin"
+
 # Local bin path. Oh-my-posh uses this, so we ensure it exists.
 mkdir -p "${HOME}/.local/bin"
 addpath "$HOME/.local/bin"
@@ -62,11 +65,9 @@ alias clear='echo -ne "\e[0;$[LINES]r"'
 # Default Editor
 export EDITOR='nano'
 
-# Load nvm eagerly in AI tools (zgenom is skipped there), lazy load via zgenom otherwise
-if [[ -n "$IN_AI_CODING_TOOL" ]]; then
-	export NVM_DIR="$HOME/.nvm"
-	[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
-else
+# Lazy-load nvm via zgenom in interactive non-AI shells. AI shells get the
+# eager load from ~/.zshenv instead (zgenom is skipped for them below).
+if [[ -z "$IN_AI_CODING_TOOL" ]]; then
 	export NVM_LAZY_LOAD=true
 fi
 
@@ -101,6 +102,7 @@ if [[ -z "$IN_AI_CODING_TOOL" ]]; then
 		zgenom load zdharma-continuum/fast-syntax-highlighting
 		zgenom load zsh-users/zsh-autocomplete
 		zgenom load z-shell/zsh-navigation-tools
+		zgenom load gauravmm/zsh-reap
 		# generate the init script from plugins above
 		zgenom save
 

@@ -23,6 +23,10 @@ fi
 rsync -rtuv .zshrc ${HOME}/.zshrc
 rsync -rtuv ${HOME}/.zshrc .zshrc
 
+# .zshenv
+rsync -rtuv .zshenv ${HOME}/.zshenv
+rsync -rtuv ${HOME}/.zshenv .zshenv
+
 # Oh-my-posh config
 rsync -rtuv .gauravmm.omp.yaml ${HOME}/.gauravmm.omp.yaml
 rsync -rtuv ${HOME}/.gauravmm.omp.yaml .gauravmm.omp.yaml
