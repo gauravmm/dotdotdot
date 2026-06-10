@@ -42,20 +42,11 @@ bindkey '\e[F' end-of-line
 # Environment Variables & Config
 #
 
-# Check if the directory exists
-addpath() {
-	if [[ -d "$1" ]]; then
-		path+=("$1")
-		return 0
-	fi
-	return 1
-}
+# addpath is defined in ~/.zshenv so every shell — including the non-interactive
+# subshells spawned by Claude Code, opencode, and codex — shares one definition.
+# ~/.local/bin is added there too, for the same reason.
 
 addpath "/opt/zerobrew/bin"
-
-# Local bin path. Oh-my-posh uses this, so we ensure it exists.
-mkdir -p "${HOME}/.local/bin"
-addpath "$HOME/.local/bin"
 
 # General aliases
 alias ls='ls --color'
