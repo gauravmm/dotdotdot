@@ -60,9 +60,7 @@ export EDITOR='nano'
 # eager load from ~/.zshenv instead (zgenom is skipped for them below).
 if [[ -z "$IN_AI_CODING_TOOL" ]]; then
 	export NVM_LAZY_LOAD=true
-fi
 
-if [[ -z "$IN_AI_CODING_TOOL" ]]; then
 	#
 	# dotdotdot updater
 	#
@@ -119,11 +117,14 @@ if [[ -z "$IN_AI_CODING_TOOL" ]]; then
 	fi
 fi
 
-# Support SSH_AUTH_SOCK updating in tmux
-if [[ -S "$SSH_AUTH_SOCK" && ! -L "$SSH_AUTH_SOCK" ]]; then
-	ln -sf "$SSH_AUTH_SOCK" ~/.ssh/ssh_auth_sock.$HOST
+# Support SSH_AUTH_SOCK updating in tmux. On macOS, launchd manages the agent
+# and sets SSH_AUTH_SOCK for us, so skip the symlink rewriting there.
+if [[ "$OSTYPE" != darwin* ]]; then
+	if [[ -S "$SSH_AUTH_SOCK" && ! -L "$SSH_AUTH_SOCK" ]]; then
+		ln -sf "$SSH_AUTH_SOCK" ~/.ssh/ssh_auth_sock.$HOST
+	fi
+	export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock.$HOST
 fi
-export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock.$HOST
 
 #
 # Software
@@ -174,3 +175,5 @@ alias unbolt='uv run --python /home/gauravmm/unbolt-project/unbolt/.venv unbolt'
 
 alias claude-alt="CLAUDE_CONFIG_DIR=$HOME/.claude-secondary claude"
 alias claude="claude --dangerously-skip-permissions"
+
+alias gst='git status'
