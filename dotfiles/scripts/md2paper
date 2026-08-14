@@ -53,7 +53,9 @@ APT = (
 
 # The screen's 3:4 shape at its physical size (spec/future/EPAPER-SEND.md in the varuag repo).
 PAGE = "159mm 212mm"
-MARGIN = "9mm 10mm 12mm"
+# Top, sides, bottom. Set against the device, not on paper: the sides are as thin as the reader
+# allows, and the top carries the clearance the tablet's own chrome takes.
+MARGIN = "13.5mm 5mm 12mm"
 
 # The device's own limits, which it does not enforce: it answers -104 and -102 instead.
 NAME_CAP = 125
