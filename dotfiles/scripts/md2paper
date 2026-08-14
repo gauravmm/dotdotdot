@@ -73,8 +73,14 @@ LIST_TIMEOUT = 8.0
 
 # A push to a sleeping tablet becomes a detached retry loop, so nothing has to wait on the device.
 # The deadline is a backstop against a forgotten process, not a policy: the pid is the kill switch.
-RETRY_S = 300
+RETRY_S = 60
 DEADLINE_S = 24 * 3600
+
+
+def _mins(seconds: int) -> str:
+    count = max(1, seconds // 60)
+    return f"{count} minute" + ("" if count == 1 else "s")
+
 
 # Sans headings against a serif body, because a spec is scanned as much as it is read. Charis SIL
 # is the body face for its stroke weight and x-height: an e-ink panel loses a fine serif.
@@ -488,7 +494,7 @@ def deliver(pdfs: list[Path], want: str) -> int:
             if waited + RETRY_S > DEADLINE_S:
                 _say(f"giving up after {waited / 3600:.1f} h, {len(left)} file(s) undelivered")
                 return 1
-            _say(f"tablet not answering ({exc}); retrying in {RETRY_S // 60} min")
+            _say(f"tablet not answering ({exc}); retrying in {_mins(RETRY_S)}")
             time.sleep(RETRY_S)
 
 
@@ -572,7 +578,7 @@ def main() -> int:
     pid, log = _spawn(made, args.folder)
     print(
         f"the tablet is not answering, so delivery is now a background task: pid {pid}\n"
-        f"it will auto retry every {RETRY_S // 60} minutes until delivered, "
+        f"it will auto retry every {_mins(RETRY_S)} until delivered, "
         f"giving up after {DEADLINE_S // 3600} h\n"
         f"log: {log}\n"
         f"kill it with: kill {pid}"
