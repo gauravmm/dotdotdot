@@ -55,7 +55,7 @@ APT = (
 PAGE = "159mm 212mm"
 # Top, sides, bottom. Set against the device, not on paper: the sides are as thin as the reader
 # allows, and the top carries the clearance the tablet's own chrome takes.
-MARGIN = "13.5mm 5mm 12mm"
+MARGIN = "11mm 3mm 6mm"
 
 # The device's own limits, which it does not enforce: it answers -104 and -102 instead.
 NAME_CAP = 125
