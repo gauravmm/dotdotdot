@@ -137,6 +137,7 @@ fi
 addpath "$HOME/.dotdotdot"
 addpath "/snap/bin"
 addpath "$HOME/.opencode/bin"
+addpath "/home/gauravmm/.nvm/versions/node/v24.18.0/bin"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
@@ -174,6 +175,15 @@ fi
 alias unbolt='uv run --python /home/gauravmm/unbolt-project/unbolt/.venv unbolt'
 
 alias claude-alt="CLAUDE_CONFIG_DIR=$HOME/.claude-secondary claude"
-alias claude="claude --dangerously-skip-permissions"
 
 alias gst='git status'
+
+# >>> Codex installer >>>
+export PATH="/home/gauravmm/.local/bin:$PATH"
+# <<< Codex installer <<<
+
+# >>> grok installer >>>
+export PATH="$HOME/.grok/bin:$PATH"
+fpath=(~/.grok/completions/zsh $fpath)
+autoload -Uz compinit && compinit -C
+# <<< grok installer <<<
