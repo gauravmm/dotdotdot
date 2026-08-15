@@ -1,0 +1,17 @@
+#!/bin/bash
+set -e
+
+# Global Claude Code instructions (~/.claude/CLAUDE.md). Newest copy wins, in
+# both directions — same convention as zsh.dotsh.
+# ponytail: only the user-level CLAUDE.md. Per-project ones live in their own
+# repos and are already versioned there.
+
+mkdir -p "${HOME}/.claude"
+
+if [ -f CLAUDE.md ]; then
+	rsync -rtuv CLAUDE.md "${HOME}/.claude/CLAUDE.md"
+fi
+
+if [ -f "${HOME}/.claude/CLAUDE.md" ]; then
+	rsync -rtuv "${HOME}/.claude/CLAUDE.md" CLAUDE.md
+fi
