@@ -174,6 +174,5 @@ fi
 alias unbolt='uv run --python /home/gauravmm/unbolt-project/unbolt/.venv unbolt'
 
 alias claude-alt="CLAUDE_CONFIG_DIR=$HOME/.claude-secondary claude"
-alias claude="claude --dangerously-skip-permissions"
 
 alias gst='git status'
