@@ -33,3 +33,7 @@ if [[ -n "$OPENCODE" || -n "$CLAUDECODE" || -n "$CODEX" ]]; then
 	export NVM_DIR="$HOME/.nvm"
 	[ -s "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
 fi
+
+if [[ -x "$HOME/.local/bin/wsl-askpass" ]]; then
+	export SUDO_ASKPASS="$HOME/.local/bin/wsl-askpass"
+fi
