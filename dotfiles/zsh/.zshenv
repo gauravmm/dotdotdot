@@ -23,7 +23,7 @@ addpath "$HOME/.local/bin"
 
 # AI coding tool detection. Done here (not .zshrc) because Claude Code, opencode,
 # and codex spawn non-interactive subshells where .zshrc is skipped.
-if [[ -n "$OPENCODE" || -n "$CLAUDECODE" || -n "$CLAUDE_CODE_SSE_PORT" || -n "$CODEX" || -n "$CODEX_THREAD_ID" || -n "$CODEX_CI" ]]; then
+if [[ -n "$OPENCODE" || -n "$CLAUDECODE" || -n "$CODEX" || -n "$CODEX_THREAD_ID" || -n "$CODEX_CI" ]]; then
 	export IN_AI_CODING_TOOL=1
 
 	# Eagerly load nvm so node/npm/npx are available in AI subshells without
