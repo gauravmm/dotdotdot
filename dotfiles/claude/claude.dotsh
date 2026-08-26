@@ -1,17 +1,20 @@
 #!/bin/bash
 set -e
 
-# Global Claude Code instructions (~/.claude/CLAUDE.md). Newest copy wins, in
-# both directions — same convention as zsh.dotsh.
-# ponytail: only the user-level CLAUDE.md. Per-project ones live in their own
-# repos and are already versioned there.
+# Global Claude Code config. Newest copy wins, in both directions — same
+# convention as zsh.dotsh.
+# ponytail: only user-level config. Per-project CLAUDE.md lives in its own repo;
+# settings.local.json is deliberately not synced — it is the per-machine override.
 
-mkdir -p "${HOME}/.claude"
+mkdir -p hooks "${HOME}/.claude/hooks" "${HOME}/.config/ccstatusline"
 
-if [ -f CLAUDE.md ]; then
-	rsync -rtuv CLAUDE.md "${HOME}/.claude/CLAUDE.md"
-fi
+sync2() {
+	[ -f "$1" ] && rsync -rtuv "$1" "$2"
+	[ -f "$2" ] && rsync -rtuv "$2" "$1"
+	return 0
+}
 
-if [ -f "${HOME}/.claude/CLAUDE.md" ]; then
-	rsync -rtuv "${HOME}/.claude/CLAUDE.md" CLAUDE.md
-fi
+sync2 CLAUDE.md         "${HOME}/.claude/CLAUDE.md"
+sync2 settings.json     "${HOME}/.claude/settings.json"      # incl. statusLine, hooks, plugins
+sync2 ccstatusline.json "${HOME}/.config/ccstatusline/settings.json"
+sync2 hooks/tasklight-claude-hook.sh "${HOME}/.claude/hooks/tasklight-claude-hook.sh"

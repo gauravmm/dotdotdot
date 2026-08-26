@@ -1,0 +1,93 @@
+{
+  "version": 3,
+  "lines": [
+    [
+      {
+        "id": "794ef593-7853-4e84-a2b1-803b078754ef",
+        "type": "context-length",
+        "rawValue": true,
+        "merge": true
+      },
+      {
+        "id": "c51c9d0a-a586-4f93-b296-1c4c11fbbf42",
+        "type": "custom-symbol",
+        "customSymbol": "⬇",
+        "merge": "no-padding"
+      },
+      {
+        "id": "227ac9d9-f43d-4553-8aa7-ac1d9033e802",
+        "type": "input-speed",
+        "rawValue": true,
+        "merge": true,
+        "metadata": {
+          "windowSeconds": "60"
+        }
+      },
+      {
+        "id": "2d88f6a4-72c2-4f27-a9ea-30a41f126efc",
+        "type": "custom-symbol",
+        "customSymbol": "⬆",
+        "merge": "no-padding"
+      },
+      {
+        "id": "fe07e521-b683-4534-b2e0-b10dba02f27b",
+        "type": "output-speed",
+        "rawValue": true,
+        "metadata": {
+          "windowSeconds": "60"
+        }
+      },
+      {
+        "id": "cbdda138-6987-43f4-96ab-2a20a7993ce4",
+        "type": "session-usage",
+        "rawValue": true,
+        "merge": true
+      },
+      {
+        "id": "499b08a0-9e25-438c-b00f-50a60dcea75d",
+        "type": "reset-timer",
+        "rawValue": true,
+        "merge": true
+      },
+      {
+        "id": "04c9e3ec-a14d-4374-9c4f-b9a7a7972d0c",
+        "type": "session-cost",
+        "rawValue": true
+      },
+      {
+        "id": "8bd8ac2f-a1bd-4b8c-829d-4dfb72ac876d",
+        "type": "weekly-usage",
+        "rawValue": true
+      },
+      {
+        "id": "98e160a3-8fa1-46c7-a4fc-94c0bee1b57c",
+        "type": "git-changes",
+        "metadata": {
+          "hideNoGit": "true"
+        }
+      }
+    ]
+  ],
+  "flexMode": "full-until-compact",
+  "compactThreshold": 60,
+  "colorLevel": 3,
+  "defaultSeparator": "|",
+  "defaultPadding": " ",
+  "inheritSeparatorColors": false,
+  "globalBold": false,
+  "minimalistMode": false,
+  "powerline": {
+    "enabled": false,
+    "separators": [
+      "|"
+    ],
+    "separatorInvertBackground": [
+      false
+    ],
+    "startCaps": [],
+    "endCaps": [],
+    "theme": "nord-aurora",
+    "autoAlign": false,
+    "continueThemeAcrossLines": true
+  }
+}
