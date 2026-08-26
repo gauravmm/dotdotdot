@@ -4,6 +4,7 @@ SAVEHIST=50000
 autoload -Uz compinit
 compinit
 setopt appendhistory extendedglob
+setopt INTERACTIVE_COMMENTS
 unsetopt autocd beep nomatch
 bindkey -e
 # Make PATH visible as the array path
