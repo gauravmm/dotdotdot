@@ -3,7 +3,7 @@ Bi-directional configuration-as-code. Deploy the same configuration on multiple 
 
 ## Quick installation
 
-On Ubuntu the prerequisites are `ca-certificates bc git zsh curl rsync wget ssh`.
+On Ubuntu the prerequisites are `ca-certificates bc git zsh curl rsync wget ssh unzip`.
 
 ```
 wget -qO - https://raw.githubusercontent.com/gauravmm/dotdotdot/master/install | bash
