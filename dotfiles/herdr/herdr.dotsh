@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+
+# Keep the Herdr-only Codex launcher separate from the real Codex executable.
+SHIM_DIR="${HOME}/.local/herdr-shims"
+mkdir -p "$SHIM_DIR"
+
+# Newest copy wins in both directions, as in zsh.dotsh.
+rsync -rtuv codex "$SHIM_DIR/codex"
+rsync -rtuv "$SHIM_DIR/codex" codex
+chmod u+x codex "$SHIM_DIR/codex"

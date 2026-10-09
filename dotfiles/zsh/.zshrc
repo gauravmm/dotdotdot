@@ -191,3 +191,8 @@ autoload -Uz compinit && compinit -C
 
 # bun completions
 [ -s "/home/gauravmm/.bun/_bun" ] && source "/home/gauravmm/.bun/_bun"
+
+# >>> Herdr Codex launcher >>>
+# Keep per-pane context by bypassing Codex's shared daemon only inside Herdr.
+export PATH="$HOME/.local/herdr-shims:$PATH"
+# <<< Herdr Codex launcher <<<

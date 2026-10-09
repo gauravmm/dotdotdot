@@ -1,0 +1,6 @@
+#!/bin/sh
+if [ "${HERDR_ENV:-}" = "1" ]; then
+    set -- --no-daemon "$@"
+fi
+
+exec "$HOME/.codex/packages/standalone/current/bin/codex" "$@"
