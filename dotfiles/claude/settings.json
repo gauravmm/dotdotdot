@@ -8,9 +8,7 @@
       "Bash(jqi --help)"
     ],
     "defaultMode": "auto",
-    "additionalDirectories": [
-      "/home/gauravmm/.claude"
-    ]
+    "additionalDirectories": ["/home/gauravmm/.claude"]
   },
   "hooks": {
     "UserPromptSubmit": [
