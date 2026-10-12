@@ -126,6 +126,7 @@
   },
   "effortLevel": "high",
   "autoCompactWindow": 300000,
+  "autoUpdatesChannel": "stable",
   "tui": "fullscreen",
   "voice": {
     "enabled": true,
@@ -134,10 +135,11 @@
   "autoMemoryEnabled": false,
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,
-  "remoteControlAtStartup": true,
+  "theme": "dark",
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
   "voiceEnabled": true,
-  "ENABLE_LSP_TOOL": "1"
+  "ENABLE_LSP_TOOL": "1",
+  "remoteControlAtStartup": true
 }
