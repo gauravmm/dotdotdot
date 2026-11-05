@@ -1,0 +1,9 @@
+# Source template: ~/.dotdotdot/dotfiles/codex/herdr.rules.in
+# Edit the template; codex.dotsh overwrites this generated file on sync.
+# All Herdr operations are explicitly authorized, including pane commands.
+prefix_rule(
+    pattern = [["herdr-open", @LAUNCHER@, "herdr", @HERDR@]],
+    decision = "allow",
+    justification = "Allow the Herdr launcher and all Herdr CLI operations outside the Codex sandbox.",
+    match = ["herdr-open workspace list", "herdr workspace list"],
+)

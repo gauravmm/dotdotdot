@@ -17,4 +17,3 @@ sync2() {
 sync2 CLAUDE.md         "${HOME}/.claude/CLAUDE.md"
 sync2 settings.json     "${HOME}/.claude/settings.json"      # incl. statusLine, hooks, plugins
 sync2 ccstatusline.json "${HOME}/.config/ccstatusline/settings.json"
-sync2 hooks/tasklight-claude-hook.sh "${HOME}/.claude/hooks/tasklight-claude-hook.sh"

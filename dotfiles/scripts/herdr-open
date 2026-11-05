@@ -1,0 +1,182 @@
+#!/usr/bin/python3
+"""Launch Herdr in a workspace for a directory, or forward Herdr CLI commands.
+
+Usage:
+  herdr-open [--root DIR] [--session NAME]
+  herdr-open [--session NAME] HERDR_COMMAND [ARGS...]
+  herdr-open -- HERDR_ARGS...
+
+With no command and an interactive terminal, reuse or create a workspace rooted
+at DIR, then attach. No command in a noninteractive environment passes through
+to Herdr without workspace changes. Commands always pass through unchanged.
+
+Root precedence: --root, HERDR_OPEN_ROOT, DEFAULT_ROOT, current directory.
+Set HERDR_OPEN_BIN to override the real Herdr executable.
+Requires only the system Python 3.12 shipped with Ubuntu 24.04.
+"""
+
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+import time
+
+
+# Change this to e.g. "~/projects" for a fixed default; None follows the caller.
+DEFAULT_ROOT = None
+SERVER_START_SECONDS = 15
+
+
+class HerdrError(Exception):
+    def __init__(self, message, code=None):
+        super().__init__(message)
+        self.code = code
+
+
+def find_binary():
+    candidate = (
+        os.environ.get("HERDR_OPEN_BIN")
+        or os.environ.get("HERDR_BIN_PATH")
+        or shutil.which("herdr")
+    )
+    if not candidate:
+        raise HerdrError("Herdr is not installed or is missing from PATH")
+    binary = shutil.which(os.path.expanduser(candidate))
+    if not binary:
+        raise HerdrError(f"Herdr executable is unavailable: {candidate}")
+    if Path(binary).resolve() == Path(__file__).resolve():
+        raise HerdrError("Herdr executable points back to herdr-open")
+    return binary
+
+
+def api(command, *args, cwd=None):
+    completed = subprocess.run(
+        [*command, *args], cwd=cwd, capture_output=True, text=True
+    )
+    if completed.returncode:
+        message = completed.stderr.strip() or completed.stdout.strip()
+        code = None
+        try:
+            error = json.loads(message)["error"]
+            message, code = error["message"], error["code"]
+        except (ValueError, KeyError, TypeError):
+            pass
+        raise HerdrError(message or f"Herdr exited with {completed.returncode}", code)
+    try:
+        return json.loads(completed.stdout)["result"]
+    except (ValueError, KeyError, TypeError) as error:
+        raise HerdrError("Herdr returned an unexpected API response") from error
+
+
+def snapshot(command, root):
+    try:
+        return api(command, "api", "snapshot")["snapshot"]
+    except HerdrError as error:
+        # Only bootstrap a missing server, never replace an incompatible one or
+        # interpret permissions/network errors as permission to start a server.
+        if error.code != "server_not_running":
+            raise
+    server = subprocess.Popen(
+        [*command, "server"],
+        cwd=root,
+        stdin=subprocess.DEVNULL,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        start_new_session=True,
+    )
+    deadline = time.monotonic() + SERVER_START_SECONDS
+    while True:
+        try:
+            return api(command, "api", "snapshot")["snapshot"]
+        except HerdrError as error:
+            if error.code != "server_not_running":
+                raise
+            if server.poll() is not None:
+                raise HerdrError("Herdr server exited during startup; check Herdr's logs")
+            if time.monotonic() >= deadline:
+                raise HerdrError("Herdr server is not ready; check Herdr's logs")
+            time.sleep(0.1)
+
+
+def matching_workspace(state, root):
+    # The API exposes checkout paths for worktree workspaces. For plain
+    # workspaces, use the first tab's root pane cwd, rather than its label or a
+    # foreground process's changing cwd. Keep this selection policy in one place.
+    first_cwds = {}
+    for pane in state["panes"]:
+        first_cwds.setdefault(pane["workspace_id"], pane.get("cwd"))
+    for workspace in state["workspaces"]:
+        worktree = workspace.get("worktree") or {}
+        cwd = worktree.get("checkout_path") or first_cwds.get(workspace["workspace_id"])
+        if cwd and Path(cwd).expanduser().resolve() == root:
+            return workspace["workspace_id"]
+    return None
+
+
+def main():
+    args = sys.argv[1:]
+    root_option = None
+    prefix = []
+    passthrough = False
+    while args:
+        option = args[0]
+        if option == "--":
+            args = args[1:]
+            passthrough = True
+            break
+        if option not in ("--root", "--session"):
+            break
+        if len(args) < 2:
+            raise HerdrError(f"{option} requires a value")
+        if option == "--root":
+            root_option = args[1]
+        else:
+            prefix = ["--session", args[1]]
+        args = args[2:]
+    if args in (["--help"], ["-h"]) and not passthrough:
+        print(__doc__)
+        return
+    command = [find_binary(), *prefix]
+    if args or passthrough or not (sys.stdin.isatty() and sys.stdout.isatty()):
+        if root_option is not None:
+            raise HerdrError("--root requires an interactive launch without a Herdr command")
+        os.execv(command[0], [*command, *args])
+    root = Path(
+        root_option or os.environ.get("HERDR_OPEN_ROOT") or DEFAULT_ROOT or Path.cwd()
+    ).expanduser().resolve()
+    if not root.is_dir():
+        raise HerdrError(f"Directory does not exist: {root}")
+    # Serialize directory selection for launchers sharing the same session. This
+    # prevents two simultaneous opens from creating duplicate workspaces.
+    import fcntl
+    import hashlib
+
+    context = "\0".join(
+        [*prefix, *(os.environ.get(key, "") for key in (
+            "HERDR_SESSION", "HERDR_SOCKET_PATH", "HERDR_CONFIG_PATH", "XDG_CONFIG_HOME"
+        ))]
+    )
+    lock_dir = Path(os.environ.get("XDG_CACHE_HOME", Path.home() / ".cache")) / "herdr-open"
+    lock_dir.mkdir(parents=True, exist_ok=True)
+    lock_path = lock_dir / (hashlib.sha256(context.encode()).hexdigest() + ".lock")
+    with lock_path.open("a") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        state = snapshot(command, root)
+        workspace_id = matching_workspace(state, root)
+        if workspace_id:
+            api(command, "workspace", "focus", workspace_id)
+        else:
+            api(command, "workspace", "create", "--cwd", str(root),
+                "--label", root.name or str(root), "--focus")
+    os.chdir(root)
+    os.execv(command[0], command)
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except (HerdrError, OSError, KeyError) as error:
+        print(f"herdr-open: {error}", file=sys.stderr)
+        sys.exit(1)

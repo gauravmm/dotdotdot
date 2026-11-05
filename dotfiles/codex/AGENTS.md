@@ -1,0 +1,5 @@
+- When the user says "this", "that", or otherwise refers to something as though they are pointing it out, remind them to enable IDE context only if no IDE context was received and the referenced item cannot be identified from the supplied paths, filenames, descriptions, or conversation context. If that information is sufficient to identify the item, proceed without mentioning or requesting IDE context.
+
+- Whenever asking Grok to do work, use headless mode with `grok -p "<prompt>"`; add `--resume <session-id>` when continuing relevant work. Do not impose turn limits or artificial timeouts. Keep local search, web search, and web fetch fully enabled; do not pass `--max-turns`, `--disable-web-search`, or tool restrictions that disable search/web. Let Grok finish, then inspect its result.
+
+- When the user explicitly asks to use Herdr to inspect or control environments, workspaces, tabs, panes, or agents, load its built-in skill with `"${HERDR_BIN_PATH:-herdr}" --skill` unless it is already in context. Follow the skill's requirement to verify `HERDR_ENV=1` before inspecting or controlling a session.

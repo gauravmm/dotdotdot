@@ -1,0 +1,52 @@
+# Allow explicit command rules in ~/.codex/rules/, including herdr.rules.
+approval_policy = "on-request"
+model = "gpt-6.1-sol"
+model_reasoning_effort = "high"
+service_tier = "default"
+approvals_reviewer = "auto_review"
+
+[plugins."github@openai-curated"]
+enabled = false
+
+[plugins."notion@openai-curated-remote"]
+enabled = false
+
+[tui]
+screen_reader_detection_done = true
+
+[tui.model_availability_nux]
+"gpt-5.5" = 4
+"gpt-5.6-sol" = 4
+gpt-6-astra = 4
+"gpt-6.1-sol" = 4
+
+[features]
+daemon_auto_start = false
+hooks = true
+remote_control = true
+
+[[skills.config]]
+path = "/home/gauravmm/.codex/skills/ui-ux-pro-max/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/home/gauravmm/.codex/skills/marp-slide/SKILL.md"
+enabled = false
+
+[[skills.config]]
+path = "/home/gauravmm/.codex/skills/meeting-transcript-summarizer/SKILL.md"
+enabled = false
+
+[notice]
+hide_rate_limit_model_nudge = true
+
+[hooks.state]
+
+[hooks.state."/home/gauravmm/.codex/hooks.json:session_start:0:0"]
+trusted_hash = "sha256:5dcaf236286a121335b40ebc5d4b1ffe512cabd743980fef90b4844b1f5aaa82"
+enabled = true
+
+[shell_environment_policy]
+inherit = "all"
+# Allow all environment variables starting with HERDR_
+include = ["HERDR_*"]

@@ -10,3 +10,4 @@
 **Commits** When making large changes to a codebase, feel free to make intermediate commits.
 **sudo** No TTY here; plain `sudo` fails. Use `sudo -A <cmd>` to use `wsl-askpass`.
 **Subagents + git stash** When parallel cleanup agents share one working tree, subagents MUST NOT run `git stash`/`pop`/scoped `checkout` which churns every other agent's concurrent changes. Have them edit in place and let the parent verify the combined tree.
+**herdr** Agent-agent messaging when `HERDR_ENV=1`; my pane is `$HERDR_PANE_ID`. `herdr agent list|get|read <pane>` to inspect, `herdr agent prompt <pane> "msg"` to send (include my pane ID for replies). Omit `--wait` for messaging; use `--wait --timeout` only when delegating to an idle agent whose result you'll then `read`. Full guide: `herdr --skill`.
