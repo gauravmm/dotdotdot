@@ -14,7 +14,25 @@ sync2() {
 	return 0
 }
 
-sync2 CLAUDE.md         "${HOME}/.claude/CLAUDE.md"
+claude_rules="${HOME}/.claude/CLAUDE.md"
+if [ -f "$claude_rules" ]; then
+	# Keep the tracked Varuag rule and preserve the timestamp for sync2.
+	varuag_rule=$(sed -n '/^\*\*Varuag\*\* /p' CLAUDE.md)
+	legacy_varuag_rule='- To deliver generated files to Gaurav on Telegram, use COS Intake. Read `http://cherusci.tail1d9089.ts.net:8766/instructions` for the API contract and examples.'
+	updated_rules=$(mktemp)
+	trap 'rm -f "$updated_rules"' EXIT
+	awk -v rule="$varuag_rule" -v legacy="$legacy_varuag_rule" '
+		$0 == legacy || /^\*\*Varuag\*\* / {
+			if (!written++) print rule
+			next
+		}
+		{ print }
+		END { if (!written) print rule }
+	' "$claude_rules" > "$updated_rules"
+	touch -r "$claude_rules" "$updated_rules"
+	rsync -ct "$updated_rules" "$claude_rules"
+fi
+sync2 CLAUDE.md         "$claude_rules"
 sync2 settings.json     "${HOME}/.claude/settings.json"      # incl. statusLine, hooks, plugins
 sync2 ccstatusline.json "${HOME}/.config/ccstatusline/settings.json"
 sync2 hooks/tasklight-claude-hook.sh "${HOME}/.claude/hooks/tasklight-claude-hook.sh"
