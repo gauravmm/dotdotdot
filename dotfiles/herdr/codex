@@ -1,5 +1,7 @@
 #!/bin/sh
 if [ "${HERDR_ENV:-}" = "1" ]; then
+    # Let the terminal open links without a duplicate Linux browser launch.
+    export BROWSER=/bin/true
     set -- --no-daemon "$@"
 fi
 

@@ -8,76 +8,15 @@
       "Bash(jqi --help)"
     ],
     "defaultMode": "auto",
-    "additionalDirectories": ["/home/gauravmm/.claude"]
-  },
-  "hooks": {
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.claude/hooks/tasklight-claude-hook.sh"
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.claude/hooks/tasklight-claude-hook.sh"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.claude/hooks/tasklight-claude-hook.sh"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.claude/hooks/tasklight-claude-hook.sh"
-          }
-        ]
-      }
-    ],
-    "SessionEnd": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.claude/hooks/tasklight-claude-hook.sh"
-          }
-        ]
-      }
-    ],
-    "PermissionRequest": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.claude/hooks/tasklight-claude-hook.sh"
-          }
-        ]
-      }
+    "additionalDirectories": [
+      "/home/gauravmm/.claude"
     ]
   },
+  "hooks": {"SessionStart":[{"matcher":"^(startup|resume|clear|compact|fork)$","hooks":[{"type":"command","command":"bash '/home/gauravmm/.claude/hooks/herdr-agent-state.sh' session","timeout":10}]}]},
   "workflowKeywordTriggerEnabled": false,
   "statusLine": {
     "type": "command",
-    "command": "zsh -c 'source ~/.zshenv; line=$(npx -y ccstatusline@latest); pony=$(bash ~/.claude/plugins/marketplaces/ponytail/hooks/ponytail-statusline.sh); [ -n \"$pony\" ] && printf \"%s %s\" \"$line\" \"$pony\" || printf \"%s\" \"$line\"'",
+    "command": "zsh -c 'source ~/.zshenv; npx -y ccstatusline@latest'",
     "padding": 0
   },
   "enabledPlugins": {
@@ -87,8 +26,7 @@
     "codex@openai-codex": false,
     "frontend-design@claude-plugins-official": false,
     "pr-review-toolkit@claude-plugins-official": false,
-    "playwright@claude-plugins-official": false,
-    "ponytail@ponytail": true
+    "playwright@claude-plugins-official": false
   },
   "extraKnownMarketplaces": {
     "claude-plugins-official": {
@@ -114,15 +52,14 @@
         "source": "github",
         "repo": "nextlevelbuilder/ui-ux-pro-max-skill"
       }
-    },
-    "ponytail": {
-      "source": {
-        "source": "github",
-        "repo": "DietrichGebert/ponytail"
-      }
     }
   },
   "effortLevel": "high",
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "autoCompactWindow": 300000
+    }
+  },
   "autoCompactWindow": 300000,
   "autoUpdatesChannel": "stable",
   "tui": "fullscreen",
@@ -134,10 +71,16 @@
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,
   "theme": "dark",
+  "remoteControlAtStartup": true,
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
   "voiceEnabled": true,
   "ENABLE_LSP_TOOL": "1",
-  "remoteControlAtStartup": true
+  "autoMode": {
+    "allow": [
+      "$defaults",
+      "Allow all actions on the robot, even potentially destructive ones."
+    ]
+  }
 }

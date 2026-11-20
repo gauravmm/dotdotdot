@@ -1,0 +1,30 @@
+#!/bin/bash
+set -e
+cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
+
+# Share preferences and instructions; keep [projects] trust settings local.
+# Config sync records its last shared version so trust-only edits cannot
+# overwrite newer shared settings. Other simultaneous edits use newest-file-wins.
+# Credentials, history, sessions, hooks, skills, and unrelated rules stay local.
+mkdir -p "${HOME}/.codex/rules"
+sync2() {
+    [ ! -f "$1" ] || rsync -rtuv "$1" "$2"
+    [ ! -f "$2" ] || rsync -rtuv "$2" "$1"
+}
+/usr/bin/python3 config-sync.py
+sync2 AGENTS.md "${HOME}/.codex/AGENTS.md"
+
+# Render the explicitly approved Herdr rule with this machine's home directory.
+# The portable template is the source of truth; generated absolute paths are
+# never copied back into the repository.
+/usr/bin/python3 - <<'PYTHON'
+import json
+from pathlib import Path
+home = Path.home()
+rule = Path("herdr.rules.in").read_text()
+rule = rule.replace("@LAUNCHER@", json.dumps(str(home / ".local/bin/herdr-open")))
+rule = rule.replace("@HERDR@", json.dumps(str(home / ".local/bin/herdr")))
+destination = home / ".codex/rules/herdr.rules"
+if not destination.exists() or destination.read_text() != rule:
+    destination.write_text(rule)
+PYTHON

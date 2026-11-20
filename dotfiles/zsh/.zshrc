@@ -196,3 +196,10 @@ autoload -Uz compinit && compinit -C
 # Keep per-pane context by bypassing Codex's shared daemon only inside Herdr.
 export PATH="$HOME/.local/herdr-shims:$PATH"
 # <<< Herdr Codex launcher <<<
+
+# Use directory-aware Herdr launches only in interactive shells with both tools.
+if [[ -o interactive ]] && (( $+commands[herdr-open] && $+commands[herdr] )); then
+	alias herdr='herdr-open'
+fi
+
+export BROWSER=/bin/true
