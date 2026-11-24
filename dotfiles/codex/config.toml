@@ -1,7 +1,7 @@
 # Allow explicit command rules in ~/.codex/rules/, including herdr.rules.
 approval_policy = "on-request"
-model = "gpt-6.1-sol"
-model_reasoning_effort = "high"
+model = "gpt-6.2-astra"
+model_reasoning_effort = "medium"
 service_tier = "default"
 approvals_reviewer = "auto_review"
 
@@ -24,6 +24,7 @@ gpt-6-astra = 4
 daemon_auto_start = false
 hooks = true
 remote_control = true
+prevent_idle_sleep = true
 
 [[skills.config]]
 path = "/home/gauravmm/.codex/skills/ui-ux-pro-max/SKILL.md"
@@ -48,5 +49,3 @@ enabled = true
 
 [shell_environment_policy]
 inherit = "all"
-# Allow all environment variables starting with HERDR_
-include = ["HERDR_*"]

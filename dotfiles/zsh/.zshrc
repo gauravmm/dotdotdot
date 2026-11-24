@@ -192,14 +192,164 @@ autoload -Uz compinit && compinit -C
 # bun completions
 [ -s "/home/gauravmm/.bun/_bun" ] && source "/home/gauravmm/.bun/_bun"
 
-# >>> Herdr Codex launcher >>>
-# Keep per-pane context by bypassing Codex's shared daemon only inside Herdr.
-export PATH="$HOME/.local/herdr-shims:$PATH"
-# <<< Herdr Codex launcher <<<
+# >>> Herdr Core agent launchers >>>
+_hc_agent_executable() {
+	local executable
+	if executable=$(whence -p -- "$1") && [[ -x "$executable" ]]; then
+		print -r -- "$executable"
+		return
+	fi
 
-# Use directory-aware Herdr launches only in interactive shells with both tools.
-if [[ -o interactive ]] && (( $+commands[herdr-open] && $+commands[herdr] )); then
-	alias herdr='herdr-open'
-fi
+	# Look for npm-installed agents before nvm has loaded into this shell.
+	case "$1" in
+		cline|cmd|cmdc|command-code|commandcode)
+			for executable in "$HOME"/.nvm/versions/node/v*/bin/"$1"(NnOn); do
+				if [[ -x "$executable" ]]; then
+					print -r -- "$executable"
+					return
+				fi
+			done
+			;;
+	esac
+	return 1
+}
+
+_hc_agent() {
+	emulate -L zsh
+	local agent=$1 executable
+	shift
+	executable=$(_hc_agent_executable "$agent") || {
+		print -u2 -- "$agent: executable not found"
+		return 127
+	}
+
+	local -x PATH=$PATH
+	if [[ $executable == "$HOME"/.nvm/versions/node/*/bin/* ]]; then
+		PATH="${executable:h}:$PATH"
+	fi
+	if [[ ! -o interactive || ! -t 0 || ! -t 1 || ! -t 2 || -n $IN_AI_CODING_TOOL ]]; then
+		"$executable" "$@"
+		return
+	fi
+
+	local -a direct_commands direct_flags value_flags foreground
+	case "$agent" in
+		codex)
+			direct_commands=(agents exec e review login logout mcp plugin app-server remote-control completion update doctor sandbox debug apply queue archive delete unarchive migrate-rollouts migrate-nfs-db cloud exec-server features help app)
+			direct_flags=(--remote)
+			value_flags=(-c --config --enable --disable --local-provider -i --image -m --model -p --profile -s --sandbox -C --cd --add-dir -a --ask-for-approval)
+			foreground=(--no-daemon)
+			;;
+		claude)
+			direct_commands=(agents attach auth auto-mode doctor install login logout logs mcp plugin remote-control respawn rm setup-token stop kill update upgrade)
+			direct_flags=(-p --print --bg --background --desktop --cloud)
+			value_flags=(--add-dir --agent --agents --allowedTools --allowed-tools --append-system-prompt --append-system-prompt-file --debug-file --disallowedTools --disallowed-tools --effort --fallback-model --file --mcp-config --model -n --name --permission-mode --plugin-dir --session-id --setting-sources --settings --system-prompt --system-prompt-file -r --resume --from-pr)
+			;;
+		grok)
+			direct_commands=(agent clone completions doctor du disk-usage export help inspect leader login logout mcp memory models plugin sessions setup trace update usage version v worker worktree wrap)
+			direct_flags=(-p --single)
+			value_flags=(--allow --cwd --debug-file --deny --disallowed-tools --json-schema --leader-socket -m --model --max-turns --output-format --permission-mode -r --resume -s --session-id --reasoning-effort --effort)
+			;;
+		opencode)
+			direct_commands=(completion acp mcp run debug providers auth agent upgrade uninstall serve web models stats export import github session plugin plug db service)
+			value_flags=(--log-level --port --hostname --mdns-domain --cors -m --model -s --session --prompt --agent --replay-limit)
+			;;
+		omp)
+			direct_commands=(acp agents anonymize auth auth-broker auth-gateway bench browser-relay cleanse clip collab commit completions compress config dry-balance find gallery gc git grep grievances if-bench images install join login models play plugin predict ps read render say search session setup share shell skill skills ssh stats stream tiny-models token toks ttsr update usage worktree)
+			direct_flags=(-p --print --mode --list-models)
+			value_flags=(--model --smol --slow --plan --goal --provider --thinking --service-tier --session --session-dir --models --tools --system-prompt --append-system-prompt -e --extension --hook)
+			;;
+		cline)
+			direct_commands=(auth config plugin skill connect mcp doctor history h hook schedule hub dashboard update version kanban)
+			direct_flags=(--json --acp -z --zen --update --kanban)
+			value_flags=(-c --cwd --compaction --id -P --provider -k --key -m --model -s --system -t --timeout --auto-approve --config --data-dir --hooks-dir)
+			;;
+		cmd|cmdc|command-code|commandcode)
+			direct_commands=(info status help whoami update feedback issue taste learn-taste mcp cloud skills acp mods login logout)
+			direct_flags=(-p --print --list-models)
+			value_flags=(-r --resume --session -n --name -m --model --effort --theme --config --permission-mode --add-dir --base --mod --mod-option --skill)
+			;;
+	esac
+
+	local arg option first_arg=''
+	local -i position=0 skip_value=0 explicit_tui=0 has_positional=0
+	for arg in "$@"; do
+		(( ++position ))
+		if (( skip_value )); then
+			skip_value=0
+			continue
+		fi
+		if [[ $arg == -- ]]; then
+			(( position < $# )) && has_positional=1
+			break
+		fi
+		option=${arg%%=*}
+		case "$agent:$option" in
+			codex:-V|claude:-v|grok:-v|opencode:-v|omp:-v|cline:-V|cmd:-v|cmdc:-v|command-code:-v|commandcode:-v)
+				direct_flags+=("$option") ;;
+			claude:-p?*|grok:-p?*|omp:-p?*|cmd:-p?*|cmdc:-p?*|command-code:-p?*|commandcode:-p?*)
+				direct_flags+=("$option") ;;
+			codex:--no-daemon) foreground=() ;;
+			cline:-i|cline:--tui) explicit_tui=1 ;;
+		esac
+		if [[ $option == (-h|--help|--version) ]] || (( direct_flags[(Ie)$option] )); then
+			"$executable" "$@"
+			return
+		fi
+		case "$arg" in
+			-*)
+				if [[ $arg == "$option" ]] && (( value_flags[(Ie)$option] )); then
+					skip_value=1
+				fi
+				;;
+			*)
+				if (( ! has_positional )); then
+					first_arg=$arg
+					has_positional=1
+				fi
+				;;
+		esac
+	done
+	if (( direct_commands[(Ie)$first_arg] )); then
+		"$executable" "$@"
+		return
+	fi
+	if [[ $agent == cline ]] && (( ! explicit_tui )); then
+		if (( has_positional )); then
+			"$executable" "$@"
+			return
+		fi
+		foreground=(--tui)
+	fi
+	if [[ -n $HC_TERMINAL_ID ]]; then
+		"$executable" "${foreground[@]}" "$@"
+		return
+	fi
+
+	# The Core daemon starts at boot. Pass paths from this interactive shell.
+	local -a launch_env=("PATH=$PATH")
+	local variable
+	for variable in BROWSER SSH_AUTH_SOCK CODEX_HOME CLAUDE_CONFIG_DIR GROK_HOME OPENCODE_CONFIG OPENCODE_CONFIG_DIR PI_CODING_AGENT_DIR; do
+		[[ -v $variable ]] && launch_env+=("$variable=${(P)variable}")
+	done
+
+	local address
+	address=$(
+		setopt pipefail
+		hc run --bg --json --cwd "$PWD" -- /usr/bin/env "${launch_env[@]}" \
+			"$executable" "${foreground[@]}" "$@" |
+			jq -er '.address | strings | select(length > 0)'
+	) || return
+	hc attach "$address"
+}
+
+path=("${(@)path:#$HOME/.local/herdr-shims}")
+for _hc_agent_name in codex claude grok opencode omp cline cmd cmdc command-code commandcode; do
+	if _hc_agent_executable "$_hc_agent_name" >/dev/null; then
+		alias "$_hc_agent_name=_hc_agent $_hc_agent_name"
+	fi
+done
+unset _hc_agent_name
+# <<< Herdr Core agent launchers <<<
 
 export BROWSER=/bin/true
