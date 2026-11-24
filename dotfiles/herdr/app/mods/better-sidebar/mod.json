@@ -1,0 +1,13 @@
+{
+  "$schema": "./mod.schema.json",
+  "version": "3.10.0",
+  "place": "none",
+  "title": "Better Sidebar",
+  "settings": {
+    "machine_order": [
+      "localhost",
+      "cherusci"
+    ],
+    "hide_this_computer": true
+  }
+}

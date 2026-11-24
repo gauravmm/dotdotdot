@@ -1,0 +1,34 @@
+#!/bin/bash
+set -euo pipefail
+cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
+
+# Use the Windows profile from WSL, even when Windows tools are absent from PATH.
+command -v wslpath >/dev/null || exit 127
+if ! powershell=$(command -v powershell.exe); then
+    powershell=$(wslpath -u 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe')
+fi
+[[ -x "$powershell" ]] || exit 127
+windows_app_dir=$("$powershell" -NoProfile -NonInteractive -Command '
+    [Console]::OutputEncoding = [Text.Encoding]::UTF8
+    if ($env:HERDR_APP_HOME) { $env:HERDR_APP_HOME }
+    else { Join-Path $env:USERPROFILE ".config/herdr-app" }
+' | tr -d '\r')
+app_dir=$(wslpath -u "$windows_app_dir")
+[[ -f "$app_dir/AGENTS.md" ]] || exit 127
+
+# Newest copy wins, like the other dotfiles hooks.
+sync2() {
+    local repo=$1 installed=$2
+    shift 2
+    [[ ! -e "$repo" ]] || rsync -rtu --checksum "$@" -- "$repo" "$installed"
+    [[ ! -e "$installed" ]] || rsync -rtu --checksum "$@" -- "$installed" "$repo"
+}
+
+mkdir -p "$app_dir/layouts"
+sync2 app/layouts/main-with-mods.json "$app_dir/layouts/main-with-mods.json"
+
+for mod in better-sidebar better-changes session-bar; do
+    mkdir -p "app/mods/$mod" "$app_dir/mods/$mod"
+    sync2 "app/mods/$mod/" "$app_dir/mods/$mod/" \
+        --exclude='.*' --exclude='*.error' --exclude='gpui-kit.d.ts' --exclude='herdr.d.ts'
+done
