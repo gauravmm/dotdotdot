@@ -269,6 +269,11 @@ _hc_agent() {
 			direct_flags=(-p --print --list-models)
 			value_flags=(-r --resume --session -n --name -m --model --effort --theme --config --permission-mode --add-dir --base --mod --mod-option --skill)
 			;;
+		agy)
+			direct_commands=(acp agent agents changelog help install mcp mic-serve models plugin plugins remote-control update)
+			direct_flags=(-p --print --prompt)
+			value_flags=(--add-dir --agent --conversation -r --resume --effort -i --prompt-interactive --input-format --json-schema --log-file --mode --model --output-format --print-timeout --project --settings)
+			;;
 	esac
 
 	local arg option first_arg=''
@@ -287,7 +292,7 @@ _hc_agent() {
 		case "$agent:$option" in
 			codex:-V|claude:-v|grok:-v|opencode:-v|omp:-v|cline:-V|cmd:-v|cmdc:-v|command-code:-v|commandcode:-v)
 				direct_flags+=("$option") ;;
-			claude:-p?*|grok:-p?*|omp:-p?*|cmd:-p?*|cmdc:-p?*|command-code:-p?*|commandcode:-p?*)
+			claude:-p?*|grok:-p?*|omp:-p?*|agy:-p?*|cmd:-p?*|cmdc:-p?*|command-code:-p?*|commandcode:-p?*)
 				direct_flags+=("$option") ;;
 			codex:--no-daemon) foreground=() ;;
 			cline:-i|cline:--tui) explicit_tui=1 ;;
@@ -344,7 +349,7 @@ _hc_agent() {
 }
 
 path=("${(@)path:#$HOME/.local/herdr-shims}")
-for _hc_agent_name in codex claude grok opencode omp cline cmd cmdc command-code commandcode; do
+for _hc_agent_name in codex claude grok opencode omp cline cmd cmdc command-code commandcode agy; do
 	if _hc_agent_executable "$_hc_agent_name" >/dev/null; then
 		alias "$_hc_agent_name=_hc_agent $_hc_agent_name"
 	fi

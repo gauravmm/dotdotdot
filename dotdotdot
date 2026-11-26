@@ -129,9 +129,9 @@ _command() {
     local scerrf=$(mktemp)
     _debug "Running $scname"
     if [[ -z $3 ]]; then
-        ( $2  >$scoutf 2>$scerrf )
+        ( $2 </dev/null >$scoutf 2>$scerrf )
     else
-        ( cd $3; $2 >$scoutf 2>$scerrf )
+        ( cd $3; $2 </dev/null >$scoutf 2>$scerrf )
     fi
     local scexit=$?
 
